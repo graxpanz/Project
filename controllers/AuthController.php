@@ -33,6 +33,6 @@ class AuthController extends Controller {
 
     public function logout() {
         session_destroy();
-        redirect('/auth/login'); 
+        redirect('/login'); 
     }
 }
