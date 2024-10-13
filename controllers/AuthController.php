@@ -24,10 +24,10 @@ class AuthController extends Controller {
                 redirect('/dashboard'); 
             } else {
                 $data['error'] = 'รหัสผ่านไม่ถูกต้องหรือชื่อผู้ใช้ไม่ถูกต้อง';
-                $this->view('auth/login', $data);
+                $this->view('auth/login', $data, false);
             }
         } else {
-            $this->view('auth/login');
+            $this->view('auth/login', [], FALSE);
         }
     }
 

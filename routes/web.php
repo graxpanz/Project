@@ -1,5 +1,6 @@
 <?php
 Route::get('/login', 'AuthController@login');
+Route::post('/login', 'AuthController@login');
 Route::get('/', 'DashboardController@index');
 Route::get('/dashboard', 'DashboardController@index');
 Route::get('/dashboard/detail-queue/{id}', 'DashboardController@detailQueue');

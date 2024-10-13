@@ -23,7 +23,7 @@
                         <?php if (isset($data['error'])): ?>
                             <div class="alert alert-danger"><?php echo $data['error']; ?></div>
                         <?php endif; ?>
-                        <form id="formLogin" method="POST" action="/auth/login">
+                        <form id="formLogin" method="POST" action="/login">
                             <div class="form-group col-sm-12">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
