@@ -13,3 +13,10 @@ Route::post('/employee/insert', 'EmployeeController@insert');
 Route::get('/employee/edit/{id}', 'EmployeeController@edit');
 Route::post('/employee/update', 'EmployeeController@update');
 Route::get('/employee/delete/{id}', 'EmployeeController@delete');
+
+Route::get('/customer', 'CustomerController@index');
+Route::get('/customer/add', 'CustomerController@add');
+Route::post('/customer/insert', 'CustomerController@insert');
+Route::get('/customer/edit/{id}', 'CustomerController@edit');
+Route::post('/customer/update', 'CustomerController@update');
+Route::get('/customer/update', 'CustomerController@update');
