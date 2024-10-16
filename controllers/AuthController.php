@@ -6,6 +6,7 @@ class AuthController extends Controller {
         }
         
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            // POST
             $username = $_POST['username'];
             $password = $_POST['password'];
 
@@ -21,12 +22,13 @@ class AuthController extends Controller {
                 $_SESSION['AD_STATUS'] = $user['status'];
                 $_SESSION['AD_LOGIN'] = date('Y-m-d H:i:s');
 
-                redirect('/dashboard'); 
+                redirect('/dashboard');
             } else {
                 $data['error'] = 'รหัสผ่านไม่ถูกต้องหรือชื่อผู้ใช้ไม่ถูกต้อง';
                 $this->view('auth/login', $data, false);
             }
         } else {
+            // GET
             $this->view('auth/login', [], FALSE);
         }
     }

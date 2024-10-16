@@ -8,13 +8,13 @@
             </div>
             <div class="row">
                 <div class="col-lg-3 col-6 mb-4">
-                    <div class="small-box bg-warning shadow">
+                    <div class="small-box bg-warning shadow" style="color: #fff !important;">
                         <div class="inner text-center">
                             <h4 class="py-3">รอดำเนินการ</h4>
                             <h1><?php echo $pendingCount; ?></h1>
                             <p>จำนวนการจองที่รอดำเนินการ</p>
                         </div>
-                        <a href="#" class="small-box-footer py-3"> รายละเอียด
+                        <a href="#" class="small-box-footer py-3" style="color: #fff !important;"> รายละเอียด
                             <i class="fas fa-arrow-circle-right"></i>
                         </a>
                     </div>
@@ -22,7 +22,7 @@
                 <div class="col-lg-3 col-6 mb-4">
                     <div class="small-box bg-primary shadow">
                         <div class="inner text-center">
-                            <h1 class="py-3">ยืนยันแล้ว</h1>
+                            <h4 class="py-3">ยืนยันแล้ว</h4>
                             <h1><?php echo $confirmedCount; ?></h1>
                             <p>จำนวนการจองที่ยืนยันแล้ว</p>
                         </div>
@@ -34,7 +34,7 @@
                 <div class="col-lg-3 col-6 mb-4">
                     <div class="small-box bg-success shadow">
                         <div class="inner text-center">
-                            <h1 class="py-3">เสร็จสิ้น</h1>
+                            <h4 class="py-3">เสร็จสิ้น</h4>
                             <h1><?php echo $completedCount; ?></h1>
                             <p>จำนวนการจองที่เสร็จสิ้น</p>
                         </div>
@@ -46,7 +46,7 @@
                 <div class="col-lg-3 col-6 mb-4">
                     <div class="small-box bg-danger shadow">
                         <div class="inner text-center">
-                            <h1 class="py-3">ยกเลิก</h1>
+                            <h4 class="py-3">ยกเลิก</h4>
                             <h1><?php echo $cancelledCount; ?></h1>
                             <p>จำนวนการจองที่ยกเลิก</p>
                         </div>
