@@ -1,7 +1,6 @@
 <?php
 // endpoint url, ControllerName @ function
 Route::get('/login', 'AuthController@login');
-http://localhost:8080/login
 Route::post('/login', 'AuthController@login');
 Route::get('/', 'DashboardController@index');
 Route::get('/dashboard', 'DashboardController@index');
