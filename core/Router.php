@@ -30,11 +30,14 @@ class Router
     }
 
     protected function convertRouteToRegex($route)
-    {
-        $route = preg_replace('/\//', '\\/', $route);
-        $route = preg_replace('/\{([a-z]+)\}/', '(?P<\1>[a-z0-9-]+)', $route);
-        return '/^' . $route . '$/i';
-    }
+{
+    $route = preg_replace('/\//', '\\/', $route);
+    // รองรับ optional parameters ด้วย ? เช่น {param?}
+    $route = preg_replace('/\{([a-z]+)\?\}/', '(?P<\1>[a-z0-9-]+)?', $route);
+    // รองรับ required parameters
+    $route = preg_replace('/\{([a-z]+)\}/', '(?P<\1>[a-z0-9-]+)', $route);
+    return '/^' . $route . '$/i';
+}
 
     protected function callAction($controller, $params)
     {
