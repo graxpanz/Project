@@ -19,3 +19,5 @@ Route::post('/customer/insert', 'CustomerController@insert');
 Route::get('/customer/edit/{id}', 'CustomerController@edit');
 Route::post('/customer/update', 'CustomerController@update');
 Route::get('/customer/update', 'CustomerController@update');
+
+Route::get('/stock', 'StockController@index');
