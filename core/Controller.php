@@ -19,4 +19,8 @@ class Controller {
             throw new Exception("View file not found: {$viewPath}");
         }
     }
+
+    public function dateFormat($date) {
+        return date('d/m/Y H:i:s', strtotime($date));
+    }
 }

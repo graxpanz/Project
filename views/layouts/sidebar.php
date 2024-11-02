@@ -61,13 +61,19 @@ function isActive($data)
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="/role" class="nav-link <?php echo isActive('role') ?>">
+                        <i class="nav-icon fas fa-user-cog"></i>
+                        <p>จัดการสิทธ์การใช้งาน</p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="/employee" class="nav-link <?php echo isActive('employee') ?>">
                         <i class="nav-icon fas fa-users"></i>
                         <p>จัดการข้อมูลพนักงาน</p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/table" class="nav-link <?php echo isActive('table') ?>">
+                    <a href="/employee-schedule" class="nav-link <?php echo isActive('employee-schedule') ?>">
                         <i class="nav-icon fas fa-calendar-day"></i>
                         <p>ตารางงานของพนักงาน</p>
                     </a>

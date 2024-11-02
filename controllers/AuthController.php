@@ -8,7 +8,7 @@ class AuthController extends Controller {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // POST
             $username = $_POST['username'];
-            $password = $_POST['password'];
+            $password = md5($_POST['password']);
 
             $userModel = $this->model('User');
             $user = $userModel->findByUsername($username);

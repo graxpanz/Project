@@ -14,6 +14,13 @@ Route::get('/manager/edit/{id}', 'ManagerController@edit');
 Route::post('/manager/update', 'ManagerController@update');
 Route::post('/manager/delete/{id}', 'ManagerController@delete');
 
+Route::get('/role', 'RoleController@index');
+Route::get('/role/add', 'RoleController@add');
+Route::post('/role/insert', 'RoleController@insert');
+Route::get('/role/edit/{id}', 'RoleController@edit');
+Route::post('/role/update', 'RoleController@update');
+Route::post('/role/delete/{id}', 'RoleController@delete');
+
 Route::get('/employee', 'EmployeeController@index');
 Route::get('/employee/add', 'EmployeeController@add');
 Route::post('/employee/insert', 'EmployeeController@insert');
