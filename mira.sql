@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1:3307
--- Generation Time: Oct 09, 2024 at 11:04 PM
--- Server version: 10.4.27-MariaDB
--- PHP Version: 7.4.33
+-- Host: 127.0.0.1
+-- Generation Time: Nov 02, 2024 at 09:13 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -52,7 +52,7 @@ CREATE TABLE `comment` (
 
 INSERT INTO `comment` (`comment_id`, `comment`, `response`, `date`) VALUES
 (1, 'test', '', '2024-08-01'),
-(2, 'test1', '', '2024-08-07');
+(2, 'test1', 'ทดสอบตอบกลับ', '2024-08-07');
 
 -- --------------------------------------------------------
 
@@ -77,9 +77,7 @@ INSERT INTO `customer` (`customer_id`, `name`, `surname`, `email`, `phone`, `age
 (2, 'view', 'rungpairin', 'rungpairin_ji64@live.rmutl.ac.th', '0956789805', '0000-00-00'),
 (4, 'view', 'xx', 'v@gmail.com', '0956789805', '2024-07-05'),
 (5, 'view', 'xx', 'v@gmail.com', '0956789805', '2024-07-05'),
-(6, 'view', 'xx', 'rungpairin_369@hotmail.com', '0000000000', '2024-07-06'),
-(7, 'view', 'xx', 'rungpairin_369@hotmail.com', '0987654321', '2024-07-13'),
-(10, 'Aris', 'aa', 'aaa@gmail.com', '876978', '2004-02-01');
+(6, 'view', 'xx', 'rungpairin_369@hotmail.com', '0000000000', '2024-07-06');
 
 -- --------------------------------------------------------
 
@@ -104,9 +102,7 @@ CREATE TABLE `employees` (
 
 INSERT INTO `employees` (`emp_id`, `fname`, `lname`, `tel`, `email`, `bdate`, `age`, `address`) VALUES
 (10, 'อริศรา', 'ปันวงค์ยอง', '0988065739', 'arissara1@gmail.com', '2002-10-22', 21, 'เชียงใหม่ 50300'),
-(11, 'อริศรา', 'ปันวงค์ยอง', '0988065739', 'arissara1@gmail.com', '2002-10-22', 21, 'เชียงใหม่ 50300'),
-(13, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(14, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+(15, 'Thanin', 'Chinlapha', '0987654321', 'tchinlapha@gmail.com', '1993-12-11', 31, 'My Home');
 
 -- --------------------------------------------------------
 
@@ -127,8 +123,7 @@ INSERT INTO `employees_position` (`emp_id`, `position_id`) VALUES
 (10, 1),
 (10, 2),
 (10, 3),
-(11, 1),
-(11, 2);
+(15, 3);
 
 -- --------------------------------------------------------
 
@@ -152,8 +147,7 @@ CREATE TABLE `estimate` (
 --
 
 INSERT INTO `estimate` (`estimate_id`, `customer_id`, `file`, `detail`, `response`, `date`, `status`, `price`) VALUES
-(1, 2, '', 'test', 'test', '2024-07-30', '', '0.00'),
-(2, 10, 'ทิชชู่.png', 'test1', '', '2024-07-01', 'ยังไม่ได้ตอบกลับ', '0.00');
+(1, 2, '', 'test', 'test', '2024-07-30', 'ตอบกลับแล้ว', 0.00);
 
 -- --------------------------------------------------------
 
@@ -176,8 +170,11 @@ CREATE TABLE `finance` (
 --
 
 INSERT INTO `finance` (`finance_id`, `date`, `list`, `income`, `expense`, `total`, `note`) VALUES
-(1, '2024-08-05', 'test', '100.00', '0.00', '100.00', ''),
-(2, '2024-08-05', 'test', '0.00', '50.00', '50.00', '');
+(1, '2024-08-05', 'test', 100.00, 0.00, 100.00, ''),
+(2, '2024-08-05', 'test', 0.00, 50.00, 50.00, ''),
+(3, '2024-11-02', 'ทดสอบ', 1000.00, 0.00, 1000.00, 'ทดสอบ รายรับ (บาท)'),
+(4, '2024-11-02', 'ทดสอบ', 0.00, 432.00, -432.00, 'ทดสอบ รายจ่าย (บาท)'),
+(5, '2024-11-02', 'ทดสอบ', 300.00, 200.00, 100.00, 'ทดสอบทดสอบทดสอบ');
 
 -- --------------------------------------------------------
 
@@ -243,12 +240,29 @@ CREATE TABLE `queue` (
   `status` enum('Pending','Confirmed','Cancelled','Completed','No-Show') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `queue`
+-- Table structure for table `role`
 --
 
-INSERT INTO `queue` (`queue_id`, `customer_id`, `emp_id`, `service_id`, `service_type_id`, `queue_date`, `queue_time`, `price`, `total`, `slip`, `create_at`, `status`) VALUES
-(1, 10, 10, 8, 4, '2024-08-08', '12:00:00', '500.00', '50.00', '', '2024-08-24 19:56:10', 'Pending');
+CREATE TABLE `role` (
+  `role_id` int(11) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `permission` text DEFAULT NULL COMMENT 'Array values',
+  `is_active` enum('0','1') DEFAULT '1',
+  `deleted_at` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `role`
+--
+
+INSERT INTO `role` (`role_id`, `name`, `permission`, `is_active`, `deleted_at`, `created_at`, `updated_at`) VALUES
+(7, 'Admin', 'dashboard, manager, role, employee, employee-schedule, customer, stock, service, estimate, promotion, comment, finance', '1', NULL, '2024-11-03 01:42:56', '2024-11-03 01:42:56'),
+(9, 'พนักงาน', 'dashboard, role, estimate, promotion, comment', '1', NULL, '2024-11-03 02:06:49', '2024-11-03 02:49:29');
 
 -- --------------------------------------------------------
 
@@ -270,9 +284,9 @@ CREATE TABLE `service` (
 --
 
 INSERT INTO `service` (`service_id`, `service_name`, `service_type_id`, `service_price`, `service_time`, `service_detail`) VALUES
-(6, 'ทำเล็บ', 1, '200.00', 90, 'ใส่กลิตเตอร์'),
-(7, 'ทำเล็บ', 1, '200.00', 90, '-'),
-(8, 'ทรีทเมนต์หน้า', 5, '900.00', 60, '-');
+(6, 'ทำเล็บ', 1, 200.00, 90, 'ใส่กลิตเตอร์'),
+(7, 'ทำเล็บ', 1, 200.00, 90, '-'),
+(8, 'ทรีทเมนต์หน้า', 5, 900.00, 60, '-');
 
 -- --------------------------------------------------------
 
@@ -327,23 +341,33 @@ INSERT INTO `stock` (`stock_id`, `stock_name`, `service_type_id`, `amount`, `ima
 --
 
 CREATE TABLE `users` (
-  `u_id` int(5) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `role_id` int(11) NOT NULL,
   `firstname` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `lastname` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `phone` varchar(10) DEFAULT NULL,
+  `birthdate` date DEFAULT NULL,
+  `age` int(11) DEFAULT NULL,
+  `address` text DEFAULT NULL,
   `username` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `password` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `image` varchar(255) NOT NULL DEFAULT 'avatar.png',
-  `status` enum('superadmin','admin','employee','customer') NOT NULL,
+  `is_active` enum('0','1') NOT NULL DEFAULT '1',
+  `deleted_at` datetime DEFAULT NULL,
   `created_at` datetime NOT NULL,
-  `update_at` datetime NOT NULL
+  `updated_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`u_id`, `firstname`, `lastname`, `username`, `password`, `image`, `status`, `created_at`, `update_at`) VALUES
-(1, 'Arissara', 'Panwongyong', 'arissara', '0000', 'avatar.png', 'superadmin', '2024-08-16 20:39:51', '2024-08-16 20:39:51');
+INSERT INTO `users` (`user_id`, `role_id`, `firstname`, `lastname`, `email`, `phone`, `birthdate`, `age`, `address`, `username`, `password`, `image`, `is_active`, `deleted_at`, `created_at`, `updated_at`) VALUES
+(1, 7, 'Arissara', 'Panwongyong', 'Arissara010@gmail.com', '0987654321', '2000-10-12', 24, 'asd', 'arissara', '4a7d1ed414474e4033ac29ccb8653d9b', '672685ac7bf1a_1730577836.png', '1', NULL, '2024-08-16 20:39:51', '2024-11-03 03:03:56'),
+(2, 9, 'Thanin', 'Chinlapha', 'tch@gmail.com', '0987654321', '1993-12-11', 30, '1231sa231d', 'tchinlapha', 'e10adc3949ba59abbe56e057f20f883e', '672685b547f48_1730577845.jpg', '1', NULL, '2024-08-16 20:39:51', '2024-11-03 03:04:05'),
+(3, 7, 'aasfas', 'asfasf', 'asfasf@asf', '0987654321', '2024-08-02', 0, '1111', 'aaaa', '$2y$10$.FZCgld.feFzc3kPd3qWz.ryUBDuD7eg9QeWvzA20A9', '67268394afd23_1730577300.png', '1', NULL, '2024-11-03 02:55:00', '2024-11-03 02:55:00'),
+(4, 7, 'aasfas', 'asfasf', 'asfasf@asf', '0987654321', '2024-08-02', 0, '1111', 'aaaazz', '$2y$10$Leh88xgVxL3ji6n7lDuVSeJpOLqW.9o9A8vvR3MfFuf', '6726843ecc297_1730577470.jpg', '1', NULL, '2024-11-03 02:57:50', '2024-11-03 02:57:50');
 
 --
 -- Indexes for dumped tables
@@ -417,6 +441,12 @@ ALTER TABLE `queue`
   ADD KEY `foreign key customer_id` (`customer_id`);
 
 --
+-- Indexes for table `role`
+--
+ALTER TABLE `role`
+  ADD PRIMARY KEY (`role_id`);
+
+--
 -- Indexes for table `service`
 --
 ALTER TABLE `service`
@@ -438,7 +468,7 @@ ALTER TABLE `stock`
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`u_id`);
+  ADD PRIMARY KEY (`user_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -466,7 +496,7 @@ ALTER TABLE `customer`
 -- AUTO_INCREMENT for table `employees`
 --
 ALTER TABLE `employees`
-  MODIFY `emp_id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `emp_id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `estimate`
@@ -478,7 +508,7 @@ ALTER TABLE `estimate`
 -- AUTO_INCREMENT for table `finance`
 --
 ALTER TABLE `finance`
-  MODIFY `finance_id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `finance_id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `position_type`
@@ -499,10 +529,16 @@ ALTER TABLE `queue`
   MODIFY `queue_id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `role`
+--
+ALTER TABLE `role`
+  MODIFY `role_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
 -- AUTO_INCREMENT for table `service`
 --
 ALTER TABLE `service`
-  MODIFY `service_id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `service_id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `service_type`
@@ -520,7 +556,7 @@ ALTER TABLE `stock`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `u_id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
