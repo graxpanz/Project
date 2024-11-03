@@ -14,7 +14,7 @@ class AuthController extends Controller {
             $user = $userModel->findByUsername($username);
 
             if ($user && $password == $user['password']) {
-                $_SESSION['AD_ID'] = $user['u_id'];
+                $_SESSION['AD_ID'] = $user['user_id'];
                 $_SESSION['AD_FIRSTNAME'] = $user['firstname'];
                 $_SESSION['AD_LASTNAME'] = $user['lastname'];
                 $_SESSION['AD_USERNAME'] = $user['username'];
