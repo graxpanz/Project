@@ -6,9 +6,7 @@ class RoleController extends Controller
 
     public function __construct()
     {
-        if (!isset($_SESSION['AD_ID'])) {
-            redirect('/login');
-        }
+        parent::__construct();
         $this->roleModel = $this->model('role');
         $this->permissions = [
             'dashboard' => 'หน้าหลัก/แดชบอร์ด',

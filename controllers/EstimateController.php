@@ -3,9 +3,7 @@ class EstimateController extends Controller {
     private $estimateModel;
 
     public function __construct() {
-        if (!isset($_SESSION['AD_ID'])) {
-            redirect('/login');
-        }
+        parent::__construct();
         $this->estimateModel = $this->model('Estimate');
     }
 

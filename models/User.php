@@ -11,7 +11,10 @@ class User
 
     public function findByUsername($username)
     {
-        $sql = "SELECT * FROM users WHERE username = ? AND deleted_at IS NULL";
+        $sql = "SELECT u.*, r.permission as permission
+                FROM users u 
+                LEFT JOIN role r ON u.role_id = r.role_id 
+                WHERE u.username = ? AND u.deleted_at IS NULL";
         $stmt = $this->db->getConnection()->prepare($sql);
         $stmt->execute([$username]);
         return $stmt->fetch(PDO::FETCH_ASSOC);

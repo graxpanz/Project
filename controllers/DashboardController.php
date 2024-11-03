@@ -3,10 +3,7 @@ class DashboardController extends Controller {
     private $queueModel;
 
     public function __construct() {
-        if (!isset($_SESSION['AD_ID'])) {
-            redirect('/login'); 
-        }
-        
+        parent::__construct();
         $this->queueModel = $this->model('Queue');
     }
 

@@ -1,4 +1,73 @@
 <?php
+$menu = [
+    [
+        "module" => "dashboard",
+        "name" => "หน้าหลัก",
+        "icon" => "fas fa-address-book",
+        "url" => "/dashboard"
+    ],
+    [
+        "module" => "manager",
+        "name" => "ผู้ดูแลระบบ",
+        "icon" => "fas fa-user-cog",
+        "url" => "/manager"
+    ],
+    [
+        "module" => "role",
+        "name" => "จัดการสิทธ์การใช้งาน",
+        "icon" => "fas fa-user-cog",
+        "url" => "/role"
+    ],
+    [
+        "module" => "employee",
+        "name" => "จัดการข้อมูลพนักงาน",
+        "icon" => "fas fa-users",
+        "url" => "/employee"
+    ],
+    [
+        "module" => "employee-schedule",
+        "name" => "ตารางงานของพนักงาน",
+        "icon" => "fas fa-calendar-day",
+        "url" => "/employee-schedule"
+    ],
+    [
+        "module" => "stock",
+        "name" => "จัดการข้อมูลสินค้าและผลิตภัณฑ์ภายในร้าน",
+        "icon" => "fas fa-box",
+        "url" => "/stock"
+    ],
+    [
+        "module" => "service",
+        "name" => "จัดการข้อมูลการบริการ",
+        "icon" => "fas fa-air-freshener",
+        "url" => "/service"
+    ],
+    [
+        "module" => "estimate",
+        "name" => "จัดการข้อมูลการประเมินใบหน้า",
+        "icon" => "fas fa-user-circle",
+        "url" => "/estimate"
+    ],
+    [
+        "module" => "promotion",
+        "name" => "จัดการโปรโมชั่น",
+        "icon" => "fas fa-tag",
+        "url" => "/promotion"
+    ],
+    [
+        "module" => "comment",
+        "name" => "จัดการความคิดเห็น",
+        "icon" => "fas fa-comments",
+        "url" => "/comment"
+    ],
+    [
+        "module" => "finance",
+        "name" => "ข้อมูลทางการเงิน",
+        "icon" => "fas fa-wallet",
+        "url" => "/finance"
+    ],
+];
+$session = explode(", " , $_SESSION['AD_PERMISSION']);
 function isActive($data)
 {
     $array = explode('/', $_SERVER['REQUEST_URI']);
@@ -43,83 +112,24 @@ function isActive($data)
             </div>
             <div class="info">
                 <a href="/manager" class="d-block">
-                    <?php echo $_SESSION['AD_FIRSTNAME'] . ' ' . $_SESSION['AD_LASTNAME'] ?> </a>
+                    <?php echo $_SESSION['AD_FIRSTNAME'] . ' ' . $_SESSION['AD_LASTNAME'] ?>
+                </a>
             </div>
         </div>
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                <li class="nav-item">
-                    <a href="/dashboard" class="nav-link <?php echo isActive('dashboard') ?>">
-                        <i class="nav-icon fas fa-address-book"></i>
-                        <p>หน้าหลัก</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/manager" class="nav-link <?php echo isActive('manager') ?>">
-                        <i class="nav-icon fas fa-user-cog"></i>
-                        <p>ผู้ดูแลระบบ</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/role" class="nav-link <?php echo isActive('role') ?>">
-                        <i class="nav-icon fas fa-user-cog"></i>
-                        <p>จัดการสิทธ์การใช้งาน</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/employee" class="nav-link <?php echo isActive('employee') ?>">
-                        <i class="nav-icon fas fa-users"></i>
-                        <p>จัดการข้อมูลพนักงาน</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/employee-schedule" class="nav-link <?php echo isActive('employee-schedule') ?>">
-                        <i class="nav-icon fas fa-calendar-day"></i>
-                        <p>ตารางงานของพนักงาน</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/customer" class="nav-link <?php echo isActive('customer') ?>">
-                        <i class="nav-icon fas fa-users"></i>
-                        <p>จัดการข้อมูลลูกค้า</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/stock" class="nav-link <?php echo isActive('stock') ?>">
-                        <i class="nav-icon fas fa-box"></i>
-                        <p>จัดการข้อมูลสินค้าและผลิตภัณฑ์ภายในร้าน</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/service" class="nav-link <?php echo isActive('service') ?>">
-                        <i class="nav-icon fas fa-air-freshener"></i>
-                        <p>จัดการข้อมูลการบริการ</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/estimate" class="nav-link <?php echo isActive('estimate') ?>">
-                        <i class="nav-icon fas fa-user-circle"></i>
-                        <p>จัดการข้อมูลการประเมินใบหน้า</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/promotion" class="nav-link <?php echo isActive('promotion') ?>">
-                        <i class="nav-icon fas fa-tag"></i>
-                        <p>จัดการโปรโมชั่น</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/comment" class="nav-link <?php echo isActive('comment') ?>">
-                        <i class="nav-icon fas fa-comments"></i>
-                        <p>จัดการความคิดเห็น</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/finance" class="nav-link <?php echo isActive('finance') ?>">
-                        <i class="nav-icon fas fa-wallet"></i>
-                        <p>ข้อมูลทางการเงิน</p>
-                    </a>
-                </li>
+                <?php foreach ($menu as $item): ?>
+                    <?php if (in_array($item['module'], $session)): ?>
+                    <li class="nav-item">
+                        <a href="<?php echo $item['url'] ?>" class="nav-link <?php echo isActive(ltrim($item['url'], '/')) ?>">
+                            <i class="nav-icon <?php echo $item['icon'] ?>"></i>
+                            <p><?php echo $item['name'] ?></p>
+                        </a>
+                    </li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+                
+                <!-- Account Section -->
                 <li class="nav-header">บัญชีของเรา</li>
                 <li class="nav-item">
                     <a href="/logout" id="logout" class="nav-link">

@@ -3,9 +3,7 @@ class FinanceController extends Controller {
     private $financeModel;
 
     public function __construct() {
-        if (!isset($_SESSION['AD_ID'])) {
-            redirect('/login');
-        }
+        parent::__construct();
         $this->financeModel = $this->model('Finance');
     }
 
