@@ -3,9 +3,7 @@ class ServiceController extends Controller {
     private $serviceModel;
 
     public function __construct() {
-        if (!isset($_SESSION['AD_ID'])) {
-            redirect('/login');
-        }
+        parent::__construct();
         $this->serviceModel = $this->model('Service');
     }
 

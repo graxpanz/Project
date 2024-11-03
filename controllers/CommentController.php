@@ -3,9 +3,7 @@ class CommentController extends Controller {
     private $commentModel;
 
     public function __construct() {
-        if (!isset($_SESSION['AD_ID'])) {
-            redirect('/login');
-        }
+        parent::__construct();
         $this->commentModel = $this->model('Comment');
     }
 

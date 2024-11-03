@@ -3,10 +3,7 @@ class ManagerController extends Controller {
     private $userModel;
 
     public function __construct() {
-        // ตรวจสอบสิทธิ์การเข้าถึง
-        if (!isset($_SESSION['AD_ID'])) {
-            redirect('/login');
-        }
+        parent::__construct();
         $this->userModel = $this->model('User');
     }
 

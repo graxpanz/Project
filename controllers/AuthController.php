@@ -21,6 +21,7 @@ class AuthController extends Controller {
                 $_SESSION['AD_IMAGE'] = $user['image'];
                 $_SESSION['AD_STATUS'] = $user['status'];
                 $_SESSION['AD_LOGIN'] = date('Y-m-d H:i:s');
+                $_SESSION['AD_PERMISSION'] = $user['permission'];
 
                 redirect('/dashboard');
             } else {
