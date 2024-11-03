@@ -13,7 +13,7 @@ class ServiceController extends Controller {
         $services = $this->serviceModel->getAllServices();
         $serviceTypes = $this->serviceModel->getServiceTypes();
         $data = [
-            'title' => 'จัดการตารางงานของพนักงาน | Mira ศูนย์ความงามครบวงจร',
+            'title' => 'จัดการการบริการ | Mira ศูนย์ความงามครบวงจร',
             'services' => $services,
             'serviceTypes' => $serviceTypes
         ];

@@ -66,3 +66,8 @@ Route::post('/finance/update', 'FinanceController@update');
 Route::post('/finance/delete/{id}', 'FinanceController@delete');
 
 Route::get('/stock', 'StockController@index');
+Route::get('/stock/add', 'StockController@add');
+Route::post('/stock/insert', 'StockController@insert');
+Route::get('/stock/edit/{id}', 'StockController@edit');
+Route::post('/stock/update', 'StockController@update');
+Route::post('/stock/delete/{id}', 'StockController@delete');

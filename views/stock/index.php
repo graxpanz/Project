@@ -4,11 +4,11 @@
             <i class="fas fa-box"></i>
             จัดการข้อมูลสินค้าและผลิตภัณฑ์ภายในร้าน
         </h4>
-        <a href="add_stock.php" class="btn btn-primary mt-3">
+        <a href="/stock/add" class="btn btn-primary mt-3">
             <i class="fas fa-plus"></i>
             เพิ่มข้อมูลสินค้าและผลิตภัณฑ์ภายในร้าน
         </a>
-        <a href="manage_add_stock.php" class="btn btn-success mt-3">
+        <a href="add_stock.php" class="btn btn-success mt-3">
             <i class="fas fa-plus"></i>
             เพิ่มจำนวนสินค้าและผลิตภัณฑ์ภายในร้าน
         </a>
@@ -21,7 +21,7 @@
         </a>
 
         <form method="GET" class="mt-3">
-            <label for="service_type_id">เลือกประเภทสินค้าการบริการ : </label>
+            <label for="service_type_id">เลือกประเภทการบริการ : </label>
             <select name="service_type_id" id="service_type_id" onchange="this.form.submit()">
                 <option value="">ทั้งหมด</option>
                 <?php foreach ($serviceTypes as $type): ?>
@@ -46,12 +46,15 @@
             </thead>
             <tbody>
                 <?php
-                foreach ($stock as $index => $stock): 
-                $filteredStocks = isset($_GET['service_type_id']) && $_GET['service_type_id'] != ''
-                    ? array_filter($stocks, function ($stock) {
-                        return $stock['service_type_id'] == $_GET['service_type_id'];
+                $service_type_id = filter_input(INPUT_GET, 'service_type_id', FILTER_VALIDATE_INT);
+                $filteredStocks = $service_type_id !== false && $service_type_id !== null
+                    ? array_filter($stock, function ($stock) use ($service_type_id) {
+                        return $stock['service_type_id'] == $service_type_id;
                     })
                     : $stock;
+
+
+                foreach ($filteredStocks as $index => $stock):
                     ?>
                     <tr>
                         <td><?php echo $index + 1; ?></td>
@@ -61,7 +64,7 @@
                         <td><img src="../stock/image/<?php echo htmlspecialchars($stock['image']); ?>" alt="Stock Image"
                                 style="width: 50px; height: 50px;"></td>
                         <td>
-                            <a href="edit_stock.php?id=<?php echo $stock['stock_id']; ?>" type="button"
+                            <a href="/stock/edit/<?php echo $stock['stock_id']; ?>" type="button"
                                 class="btn btn-warning text-white">
                                 <i class="far fa-edit"></i> แก้ไข
                             </a>
