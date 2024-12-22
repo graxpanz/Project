@@ -41,6 +41,7 @@
                     <th>ประเภทสินค้าการบริการ</th>
                     <th>จำนวน</th>
                     <th>รูปสินค้า</th>
+                    <th>อัพเดทล่าสุด</th>
                     <th>จัดการ</th>
                 </tr>
             </thead>
@@ -63,6 +64,7 @@
                         <td><?php echo htmlspecialchars($stock['amount']); ?></td>
                         <td><img src="../stock/image/<?php echo htmlspecialchars($stock['image']); ?>" alt="Stock Image"
                                 style="width: 50px; height: 50px;"></td>
+                        <td><?php echo $this->dateFormat($stock['updated_at']); ?></td>
                         <td>
                             <a href="/stock/edit/<?php echo $stock['stock_id']; ?>" type="button"
                                 class="btn btn-warning text-white">

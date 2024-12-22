@@ -4,6 +4,6 @@ return [
     'dbname' => 'mira',
     'username' => 'root',
     'password' => '',
-    'port' => 3307,
+    'port' => 3306,
     'charset' => 'utf8mb4'
 ];

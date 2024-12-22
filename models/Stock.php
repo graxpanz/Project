@@ -17,6 +17,10 @@ class Stock
             stock.service_type_id, 
             stock.amount, 
             stock.image, 
+            stock.is_active, 
+            stock.deleted_at, 
+            stock.created_at, 
+            stock.updated_at, 
             service_type.service_type_name 
         FROM 
             stock 
