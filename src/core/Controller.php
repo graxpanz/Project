@@ -1,6 +1,6 @@
 <?php
 class Controller {
-    protected $allowedRoutes = ['login', 'logout', 'register', 'forgot-password', 'assets']; // Add any public routes here
+    protected $allowedRoutes = ['login', 'logout', 'forgot-password', 'assets']; // Add any public routes here
 
     public function __construct() {
         if (session_status() === PHP_SESSION_NONE) {
@@ -67,6 +67,6 @@ class Controller {
         $uri = $_SERVER['REQUEST_URI'];
         $path = parse_url($uri, PHP_URL_PATH);
         $segments = explode('/', trim($path, '/'));
-        return !empty($segments[0]) ? $segments[0] : 'login';
+        return !empty($segments[0]) ? $segments[0] : '';
     }
 }

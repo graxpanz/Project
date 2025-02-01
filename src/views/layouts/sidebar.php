@@ -118,6 +118,7 @@ function isActive($data)
         </div>
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <li class="nav-header">จัดการข้อมูล</li>
                 <?php foreach ($menu as $item): ?>
                     <?php if (in_array($item['module'], $session)): ?>
                     <li class="nav-item">
