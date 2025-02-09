@@ -2,7 +2,9 @@
 class User
 {
     private $db;
-    private $uploadPath = 'uploads/managers/'; // กำหนด path ที่จะเก็บรูปภาพ
+    private $dbname = 'user';
+    private $uploadPath = 'assets/uploads/user/';
+    private $soft_delete = true;
 
     public function __construct()
     {
@@ -12,96 +14,77 @@ class User
     public function findByUsername($username)
     {
         $sql = "SELECT u.*, r.permission as permission
-                FROM users u 
-                LEFT JOIN role r ON u.role_id = r.role_id 
-                WHERE u.username = ? AND u.deleted_at IS NULL";
+                FROM $this->dbname u 
+                LEFT JOIN user_role r ON u.user_role_id = r.user_role_id 
+                WHERE u.username = ? AND u.is_active = '1' AND u.deleted_at IS NULL";
         $stmt = $this->db->getConnection()->prepare($sql);
         $stmt->execute([$username]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getAllManagers()
+    public function getAllUsers()
     {
         $sql = "SELECT u.*, r.name as role_name 
-                FROM users u 
-                LEFT JOIN role r ON u.role_id = r.role_id 
+                FROM $this->dbname u 
+                LEFT JOIN user_role r ON u.user_role_id = r.user_role_id 
                 WHERE u.deleted_at IS NULL 
-                ORDER BY u.created_at DESC";
+                ORDER BY u.created_at ASC";
         $stmt = $this->db->getConnection()->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getManagerById($id)
+    public function getUserById($id)
     {
         $sql = "SELECT u.*, r.name as role_name 
-                FROM users u 
-                LEFT JOIN role r ON u.role_id = r.role_id 
+                FROM $this->dbname u 
+                LEFT JOIN user_role r ON u.user_role_id = r.user_role_id 
                 WHERE u.user_id = ? AND u.deleted_at IS NULL";
         $stmt = $this->db->getConnection()->prepare($sql);
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function insertManager($data)
+    public function insertUser($data)
     {
-        try {
-            $this->db->getConnection()->beginTransaction();
-
-            // ตรวจสอบว่า username ซ้ำหรือไม่
-            if ($this->isUsernameExists($data['username'])) {
-                // throw new Exception("Username นี้ถูกใช้งานแล้ว");
-                return false;
-            }
-
-            $sql = "INSERT INTO users (
-                firstname, lastname, email, phone, 
-                birthdate, age, address, username, 
-                password, role_id, image, is_active,
-                created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
-
-            $stmt = $this->db->getConnection()->prepare($sql);
-
-            // จัดการรูปภาพ
-            $image = 'default.png';
-            if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                $image = $this->uploadImage($_FILES['image']);
-            }
-
-            $success = $stmt->execute([
-                $data['firstname'],
-                $data['lastname'],
-                $data['email'],
-                $data['phone'],
-                $data['birthdate'],
-                $data['age'],
-                $data['address'],
-                $data['username'],
-                password_hash($data['password'], PASSWORD_DEFAULT), // ใช้ password_hash แทน md5
-                $data['role_id'],
-                $image,
-                $data['is_active'] ?? 1
-            ]);
-
-            if ($success) {
-                $this->db->getConnection()->commit();
-                return true;
-            }
-
-            throw new Exception("ไม่สามารถบันทึกข้อมูลได้");
-        } catch (Exception $e) {
-            $this->db->getConnection()->rollBack();
-            throw $e;
+        // ตรวจสอบว่า username ซ้ำหรือไม่
+        if ($this->isUsernameExists($data['username'])) {
+            return false;
         }
+
+        $sql = "INSERT INTO $this->dbname (
+                firstname, lastname, email, phone, 
+                birthdate, address, username, 
+                password, user_role_id, image, is_active,
+                created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+
+        $stmt = $this->db->getConnection()->prepare($sql);
+
+        // จัดการรูปภาพ
+        $image = NULL;
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $image = $this->uploadImage($_FILES['image']);
+        }
+
+        return $stmt->execute([
+            $data['firstname'],
+            $data['lastname'],
+            $data['email'],
+            $data['phone'],
+            $data['birthdate'],
+            $data['address'],
+            $data['username'],
+            password_hash($data['password'], PASSWORD_DEFAULT),
+            $data['user_role_id'],
+            $image,
+            $data['is_active'] ?? 1
+        ]);
     }
 
-    public function updateManager($data, $files = null)
+    public function updateUser($data, $files = null)
     {
-        try {
-            $this->db->getConnection()->beginTransaction();
-
             // ตรวจสอบว่ามีผู้ใช้อยู่จริง
-            $currentUser = $this->getManagerById($data['user_id']);
+            $currentUser = $this->getUserById($data['user_id']);
             if (!$currentUser) {
                 return false;
             }
@@ -111,16 +94,15 @@ class User
                 return false;
             }
 
-            $sql = "UPDATE users SET 
+            $sql = "UPDATE $this->dbname SET 
                 firstname = ?,
                 lastname = ?,
                 email = ?,
                 phone = ?,
                 birthdate = ?,
-                age = ?,
                 address = ?,
                 username = ?,
-                role_id = ?,
+                user_role_id = ?,
                 is_active = ?,
                 updated_at = NOW()";
 
@@ -130,10 +112,9 @@ class User
                 $data['email'],
                 $data['phone'],
                 $data['birthdate'],
-                $data['age'],
                 $data['address'],
                 $data['username'],
-                $data['role_id'],
+                $data['user_role_id'],
                 $data['is_active']
             ];
 
@@ -145,24 +126,19 @@ class User
 
             // จัดการรูปภาพใหม่
             if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                try {
-                    // อัพโหลดรูปใหม่
-                    $newImage = $this->uploadImage($_FILES['image']);
-                    if ($newImage) {
-                        $sql .= ", image = ?";
-                        $params[] = $newImage;
+                // อัพโหลดรูปใหม่
+                $newImage = $this->uploadImage($_FILES['image']);
+                if ($newImage) {
+                    $sql .= ", image = ?";
+                    $params[] = $newImage;
 
-                        // ลบรูปเก่าถ้าไม่ใช่รูป default
-                        if (!empty($currentUser['image']) && $currentUser['image'] !== 'default.png') {
-                            $oldImagePath = $this->uploadPath . $currentUser['image'];
-                            if (file_exists($oldImagePath)) {
-                                unlink($oldImagePath);
-                            }
+                    // ลบรูปเก่า
+                    if (!empty($currentUser['image'])) {
+                        $oldImagePath = $this->uploadPath . $currentUser['image'];
+                        if (file_exists($oldImagePath)) {
+                            unlink($oldImagePath);
                         }
                     }
-                } catch (Exception $e) {
-                    // หากมีข้อผิดพลาดในการอัพโหลดรูป ให้ทำงานต่อโดยไม่อัพเดทรูปภาพ
-                    error_log("Error uploading image: " . $e->getMessage());
                 }
             }
 
@@ -170,51 +146,27 @@ class User
             $params[] = $data['user_id'];
 
             $stmt = $this->db->getConnection()->prepare($sql);
-            $success = $stmt->execute($params);
-
-            if ($success) {
-                $this->db->getConnection()->commit();
-                return true;
-            }
-
-            $this->db->getConnection()->rollBack();
-            return false;
-        } catch (Exception $e) {
-            $this->db->getConnection()->rollBack();
-            error_log("Error updating manager: " . $e->getMessage());
-            return false;
-        }
+            return $stmt->execute($params);
     }
 
-    public function deleteManager($id)
+    public function deleteUser($id)
     {
-        try {
-            $this->db->getConnection()->beginTransaction();
-
-            // ใช้ soft delete แทนการลบจริง
-            $sql = "UPDATE users SET 
-                    deleted_at = NOW(),
-                    is_active = 0 
-                    WHERE user_id = ? AND deleted_at IS NULL";
-
-            $stmt = $this->db->getConnection()->prepare($sql);
-            $success = $stmt->execute([$id]);
-
-            if ($success) {
-                $this->db->getConnection()->commit();
-                return true;
-            }
-
-            throw new Exception("ไม่สามารถลบข้อมูลได้");
-        } catch (Exception $e) {
-            $this->db->getConnection()->rollBack();
-            throw $e;
+        if ($this->soft_delete) {
+            $sql = "UPDATE $this->dbname SET 
+                deleted_at = NOW(),
+                is_active = '0' 
+                WHERE user_id = ? AND deleted_at IS NULL";
+        } else {
+            $sql = "DELETE FROM $this->dbname WHERE user_id = ?";
         }
+        
+        $stmt = $this->db->getConnection()->prepare($sql);
+        return $stmt->execute([$id]);
     }
 
     public function updateStatus($id, $status)
     {
-        $sql = "UPDATE users SET 
+        $sql = "UPDATE $this->dbname SET 
                 is_active = ?,
                 updated_at = NOW() 
                 WHERE user_id = ? AND deleted_at IS NULL";
@@ -222,9 +174,18 @@ class User
         return $stmt->execute([$status, $id]);
     }
 
+    public function updateLastLogin($id)
+    {
+        $sql = "UPDATE $this->dbname SET 
+                last_login = NOW()
+                WHERE user_id = ?";
+        $stmt = $this->db->getConnection()->prepare($sql);
+        return $stmt->execute([$id]);
+    }
+
     private function isUsernameExists($username, $excludeId = null)
     {
-        $sql = "SELECT COUNT(*) FROM users WHERE username = ? AND deleted_at IS NULL";
+        $sql = "SELECT COUNT(*) FROM $this->dbname WHERE username = ? AND deleted_at IS NULL";
         $params = [$username];
 
         if ($excludeId) {

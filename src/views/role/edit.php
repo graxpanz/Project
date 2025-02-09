@@ -2,7 +2,7 @@
     <div class="card-header border-0 pt-4">
         <h4>
             <i class="fas fa-tag"></i>
-            แก้ไขสิทธ์การใช้งาน
+            แก้ไขสิทธ์ผู้ใช้
         </h4>
         <a href="/role" class="btn btn-info my-3">
             <i class="fas fa-list"></i>
@@ -10,7 +10,7 @@
         </a>
     </div>
     <form action="/role/update" method="POST">
-        <input type="hidden" name="role_id" value="<?= $role['role_id'] ?>">
+        <input type="hidden" name="user_role_id" value="<?= $role['user_role_id'] ?>">
         <div class="card-body">
             <div class="mb-3">
                 <label for="name" class="form-label">ชื่อตำแหน่ง</label>

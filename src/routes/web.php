@@ -7,12 +7,12 @@ Route::get('/', 'DashboardController@index');
 Route::get('/dashboard', 'DashboardController@index');
 Route::get('/dashboard/detail-queue/{id}', 'DashboardController@detailQueue');
 
-Route::get('/manager', 'ManagerController@index');
-Route::get('/manager/add', 'ManagerController@add');
-Route::post('/manager/insert', 'ManagerController@insert');
-Route::get('/manager/edit/{id}', 'ManagerController@edit');
-Route::post('/manager/update', 'ManagerController@update');
-Route::post('/manager/delete/{id}', 'ManagerController@delete');
+Route::get('/user', 'UserController@index');
+Route::get('/user/add', 'UserController@add');
+Route::post('/user/insert', 'UserController@insert');
+Route::get('/user/edit/{id}', 'UserController@edit');
+Route::post('/user/update', 'UserController@update');
+Route::post('/user/delete/{id}', 'UserController@delete');
 
 Route::get('/role', 'RoleController@index');
 Route::get('/role/add', 'RoleController@add');

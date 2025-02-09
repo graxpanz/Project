@@ -2,7 +2,7 @@
     <div class="card-header border-0 pt-4">
         <h4>
             <i class="fas fa-tag"></i>
-            เพิ่มข้อมูลสิทธ์การใช้งาน
+            เพิ่มข้อมูลสิทธ์ผู้ใช้
         </h4>
         <a href="/role" class="btn btn-info my-3">
             <i class="fas fa-list"></i>

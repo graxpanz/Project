@@ -27,7 +27,7 @@
                             <div class="form-group col-sm-12">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
-                                        <div class="input-group-text px-2">ชื่อผู้ใช้งาน</div>
+                                        <div class="input-group-text px-3" style="width: 80px;">ชื่อผู้ใช้</div>
                                     </div>
                                     <input type="text" class="form-control" name="username" placeholder="username" required>
                                 </div>
@@ -35,7 +35,7 @@
                             <div class="form-group col-sm-12">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
-                                        <div class="input-group-text px-3">รหัสผ่าน</div>
+                                        <div class="input-group-text px-3" style="width: 80px;">รหัสผ่าน</div>
                                     </div>
                                     <input type="password" class="form-control" name="password" placeholder="password" required>
                                 </div>

@@ -1,14 +1,14 @@
 <?php
-$title = 'จัดการผู้ดูแลระบบ | Mira ศูนย์ความงามครบวงจร';
+$title = 'จัดการผู้ใช้ | Mira ศูนย์ความงามครบวงจร';
 ?>
 
 <div class="card shadow">
     <div class="card-header border-0 pt-4">
         <h4>
             <i class="fas fa-user-cog"></i>
-            ผู้ดูแลระบบ
+            จัดการผู้ใช้
         </h4>
-        <a href="/manager/add" class="btn btn-primary mt-3">
+        <a href="/user/add" class="btn btn-primary mt-3">
             <i class="fas fa-plus"></i>
             เพิ่มข้อมูล
         </a>
@@ -28,11 +28,11 @@ $title = 'จัดการผู้ดูแลระบบ | Mira ศูน�
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($managers as $index => $manager): ?>
+                <?php foreach ($users as $index => $user): ?>
                     <tr>
                         <td class="text-center align-middle"><?= $index + 1 ?></td>
                         <td class="text-center align-middle">
-                            <img src="<?= !empty($manager['image']) ? '/uploads/managers/' . $manager['image'] : '/images/default-profile.png' ?>"
+                            <img src="<?= !empty($user['image']) && $user['image'] ? '/assets/uploads/user/' . $user['image'] : '/assets/images/avatar.png' ?>"
                                 alt="Profile"
                                 class="img-circle"
                                 style="width: 50px; height: 50px; object-fit: cover;">
@@ -40,45 +40,45 @@ $title = 'จัดการผู้ดูแลระบบ | Mira ศูน�
                         <td class="align-middle">
                             <div class="d-flex flex-column">
                                 <span class="font-weight-bold">
-                                    <?= htmlspecialchars($manager['firstname'] . ' ' . $manager['lastname']) ?>
+                                    <?= htmlspecialchars($user['firstname'] . ' ' . $user['lastname']) ?>
                                 </span>
                                 <small class="text-muted">
-                                    <?= htmlspecialchars($manager['username']) ?>
+                                    <?= htmlspecialchars($user['username']) ?>
                                 </small>
                             </div>
                         </td>
                         <td class="align-middle">
                             <div class="d-flex flex-column">
-                                <span><i class="fas fa-envelope mr-2"></i><?= $manager['email'] ? htmlspecialchars($manager['email']) : 'ไม่มีข้อมูลอีเมล' ?></span>
-                                <span><i class="fas fa-phone mr-2"></i><?= $manager['phone'] ? htmlspecialchars($manager['phone']) : 'ไม่มีข้อมูลเบอร์โทรศัพท์' ?></span>
+                                <span><i class="fas fa-envelope mr-2"></i><?= $user['email'] ? htmlspecialchars($user['email']) : 'ไม่มีข้อมูลอีเมล' ?></span>
+                                <span><i class="fas fa-phone mr-2"></i><?= $user['phone'] ? htmlspecialchars($user['phone']) : 'ไม่มีข้อมูลเบอร์โทรศัพท์' ?></span>
                             </div>
                         </td>
                         <td class="align-middle">
-                            <?php if (isset($manager['role_name'])): ?>
+                            <?php if (isset($user['role_name'])): ?>
                                 <span class="badge badge-info">
-                                    <?= htmlspecialchars($manager['role_name']) ?>
+                                    <?= htmlspecialchars($user['role_name']) ?>
                                 </span>
                             <?php endif; ?>
                         </td>
                         <td class="align-middle">
-                            <?php if ($manager['is_active'] == 1): ?>
+                            <?php if ($user['is_active'] == 1): ?>
                                 <span class="badge badge-success">เปิดใช้งาน</span>
                             <?php else: ?>
                                 <span class="badge badge-danger">ปิดใช้งาน</span>
                             <?php endif; ?>
                         </td>
                         <td class="align-middle">
-                            <?php if (!empty($manager['last_login'])): ?>
-                                <?= $this->dateFormat($manager['last_login']); ?>
+                            <?php if (!empty($user['last_login'])): ?>
+                                <?= $this->dateFormat($user['last_login']); ?>
                             <?php else: ?>
                                 <span class="text-muted">ไม่เคยเข้าใช้งาน</span>
                             <?php endif; ?>
                         </td>
                         <td class="text-center align-middle">
-                            <a href="/manager/edit/<?php echo $manager['user_id']; ?>" class="btn btn-warning text-white">
+                            <a href="/user/edit/<?php echo $user['user_id']; ?>" class="btn btn-warning text-white">
                                 <i class="far fa-edit"></i> แก้ไข
                             </a>
-                            <form action="/manager/delete/<?php echo $manager['user_id']; ?>" method="POST" class="d-inline">
+                            <form action="/user/delete/<?php echo $user['user_id']; ?>" method="POST" class="d-inline">
                                 <button type="button" class="btn btn-danger delete-btn">
                                     <i class="far fa-trash-alt"></i> ลบ
                                 </button>
@@ -148,7 +148,7 @@ $title = 'จัดการผู้ดูแลระบบ | Mira ศูน�
 
             Swal.fire({
                 title: 'ยืนยันการเปลี่ยนแปลง?',
-                text: `คุณต้องการ${statusText}การใช้งานผู้ดูแลระบบนี้หรือไม่?`,
+                text: `คุณต้องการ${statusText}การใช้งานผู้ใช้งานนี้หรือไม่?`,
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#28a745',
@@ -158,7 +158,7 @@ $title = 'จัดการผู้ดูแลระบบ | Mira ศูน�
             }).then((result) => {
                 if (result.isConfirmed) {
                     // ส่ง request ไปยัง endpoint สำหรับเปลี่ยนสถานะ
-                    $.post(`/manager/toggle-status/${id}`, {
+                    $.post(`/user/toggle-status/${id}`, {
                             status: newStatus
                         })
                         .done(function() {

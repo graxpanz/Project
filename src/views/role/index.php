@@ -2,11 +2,11 @@
     <div class="card-header border-0 pt-4">
         <h4>
             <i class="fas fa-tag"></i>
-            จัดการสิทธ์การใช้งาน
+            จัดการสิทธ์ผู้ใช้
         </h4>
         <a href="/role/add" class="btn btn-primary mt-3">
             <i class="fas fa-plus"></i>
-            เพิ่มข้อมูลสิทธ์การใช้งาน
+            เพิ่มข้อมูล
         </a>
     </div>
     <div class="card-body">
@@ -24,22 +24,22 @@
             <tbody>
                 <?php foreach ($roles as $index => $role): ?>
                     <tr>
-                        <td><?php echo $index + 1; ?></td>
-                        <td><?php echo htmlspecialchars($role['name']); ?></td>
-                        <td><?php $this->showPermission($role['permission']) ?></td>
-                        <td>
+                        <td class="text-center align-middle"><?= $index + 1; ?></td>
+                        <td class="text-center align-middle"><?= htmlspecialchars($role['name']); ?></td>
+                        <td class="align-middle"><?php $this->showPermission($role['permission']) ?></td>
+                        <td class="text-center align-middle">
                             <?php if ($role['is_active']) { ?>
                                 <span class="badge badge-success">เปิดใช้งาน</span>
                             <?php } else { ?>
                                 <span class="badge badge-danger">ปิดใช้งาน</span>
                             <?php } ?>
                         </td>
-                        <td><?php echo $this->dateFormat($role['updated_at']); ?></td>
-                        <td>
-                            <a href="/role/edit/<?php echo $role['role_id']; ?>" class="btn btn-warning text-white">
+                        <td class="text-center align-middle"><?= $this->dateFormat($role['updated_at']); ?></td>
+                        <td class="text-center align-middle">
+                            <a href="/role/edit/<?= $role['user_role_id']; ?>" class="btn btn-warning text-white">
                                 <i class="far fa-edit"></i> แก้ไข
                             </a>
-                            <form action="/role/delete/<?php echo $role['role_id']; ?>" method="POST" class="d-inline">
+                            <form action="/role/delete/<?= $role['user_role_id']; ?>" method="POST" class="d-inline">
                                 <button type="button" class="btn btn-danger delete-btn">
                                     <i class="far fa-trash-alt"></i> ลบ
                                 </button>

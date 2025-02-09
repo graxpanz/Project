@@ -2,28 +2,26 @@
 class AuthController extends Controller {
     public function login() {
         if (isset($_SESSION['AD_ID'])) {
-            redirect('/dashboard'); 
+            redirect('/user'); 
         }
         
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // POST
             $username = $_POST['username'];
-            $password = md5($_POST['password']);
-
+            $password =$_POST['password'];
             $userModel = $this->model('User');
             $user = $userModel->findByUsername($username);
 
-            if ($user && $password == $user['password']) {
+            if ($user && (password_verify($password, $user['password']))) {
                 $_SESSION['AD_ID'] = $user['user_id'];
+                $_SESSION['AD_USERNAME'] = $user['username'];
                 $_SESSION['AD_FIRSTNAME'] = $user['firstname'];
                 $_SESSION['AD_LASTNAME'] = $user['lastname'];
-                $_SESSION['AD_USERNAME'] = $user['username'];
                 $_SESSION['AD_IMAGE'] = $user['image'];
-                $_SESSION['AD_STATUS'] = $user['status'];
                 $_SESSION['AD_LOGIN'] = date('Y-m-d H:i:s');
                 $_SESSION['AD_PERMISSION'] = $user['permission'];
-
-                redirect('/dashboard');
+                $userModel->updateLastLogin($user['user_id']);
+                redirect('/user');
             } else {
                 $data['error'] = 'รหัสผ่านไม่ถูกต้องหรือชื่อผู้ใช้ไม่ถูกต้อง';
                 $this->view('auth/login', $data, false);

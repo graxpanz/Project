@@ -10,8 +10,8 @@ class RoleController extends Controller
         $this->roleModel = $this->model('role');
         $this->permissions = [
             'dashboard' => 'หน้าหลัก/แดชบอร์ด',
-            'manager' => 'ผู้ดูแลระบบ',
-            'role' => 'จัดการสิทธ์การใช้งาน',
+            'user' => 'จัดการผู้ใช้',
+            'role' => 'จัดการสิทธ์ผู้ใช้',
             'employee' => 'จัดการข้อมูลพนักงาน',
             'employee-schedule' => 'ตารางงานของพนักงาน',
             'customer' => 'จัดการข้อมูลลูกค้า',
@@ -28,7 +28,7 @@ class RoleController extends Controller
     {
         $roles = $this->roleModel->getAllroles();
         $data = [
-            'title' => 'จัดการโปรโมชั่น | Mira ศูนย์ความงามครบวงจร',
+            'title' => 'จัดการสิทธ์ผู้ใช้ | Mira ศูนย์ความงามครบวงจร',
             'roles' => $roles,
             'permission' => $this->permissions
         ];
@@ -38,7 +38,7 @@ class RoleController extends Controller
     public function add()
     {
         $data = [
-            'title' => 'เพิ่มข้อมูลโปรโมชั่น | Mira ศูนย์ความงามครบวงจร',
+            'title' => 'เพิ่มข้อมูลสิทธ์ผู้ใช้ | Mira ศูนย์ความงามครบวงจร',
             'permissions' => $this->permissions
         ];
         $this->view('role/add', $data);
@@ -48,7 +48,7 @@ class RoleController extends Controller
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($this->roleModel->insertRole($_POST)) {
-                redirect()->with('success', 'เพิ่มข้อมูลโปรโมชั่นสำเร็จ')->to('/role');
+                redirect()->with('success', 'เพิ่มข้อมูลสิทธ์ผู้ใช้สำเร็จ')->to('/role');
             } else {
                 redirect()->with('error', 'เกิดข้อผิดพลาดในการเพิ่มข้อมูล')->back();
             }
@@ -59,11 +59,11 @@ class RoleController extends Controller
     {
         $role = $this->roleModel->getRoleById($id);
         if (!$role) {
-            redirect()->with('error', 'ไม่พบข้อมูลโปรโมชั่น')->to('/role');
+            redirect()->with('error', 'ไม่พบข้อมูลสิทธ์ผู้ใช้')->to('/role');
         }
 
         $data = [
-            'title' => 'แก้ไขข้อมูลโปรโมชั่น | Mira ศูนย์ความงามครบวงจร',
+            'title' => 'แก้ไขข้อมูลสิทธ์ผู้ใช้| Mira ศูนย์ความงามครบวงจร',
             'role' => $role,
             'permissions' => $this->permissions
         ];
@@ -73,8 +73,9 @@ class RoleController extends Controller
     public function update()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            if ($this->roleModel->updateRole($_POST)) {
-                redirect()->with('success', 'อัปเดตข้อมูลโปรโมชั่นสำเร็จ')->to('/role');
+            $validate = (!empty($_POST['permissions']));
+            if ($validate && $this->roleModel->updateRole($_POST)) {
+                redirect()->with('success', 'อัปเดตข้อมูลสิทธ์ผู้ใช้สำเร็จ')->to('/role');
             } else {
                 redirect()->with('error', 'เกิดข้อผิดพลาดในการอัปเดตข้อมูล')->back();
             }
@@ -84,7 +85,7 @@ class RoleController extends Controller
     public function delete($id)
     {
         if ($this->roleModel->deleteRole($id)) {
-            redirect()->with('success', 'ลบข้อมูลโปรโมชั่นสำเร็จ')->to('/role');
+            redirect()->with('success', 'ลบข้อข้อมูลสิทธ์ผู้ใช้สำเร็จ')->to('/role');
         } else {
             redirect()->with('error', 'เกิดข้อผิดพลาดในการลบข้อมูล')->back();
         }

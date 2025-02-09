@@ -1,20 +1,20 @@
 <?php
 $menu = [
+    // [
+    //     "module" => "dashboard",
+    //     "name" => "หน้าหลัก",
+    //     "icon" => "fas fa-address-book",
+    //     "url" => "/dashboard"
+    // ],
     [
-        "module" => "dashboard",
-        "name" => "หน้าหลัก",
-        "icon" => "fas fa-address-book",
-        "url" => "/dashboard"
-    ],
-    [
-        "module" => "manager",
-        "name" => "ผู้ดูแลระบบ",
+        "module" => "user",
+        "name" => "จัดการผู้ใช้",
         "icon" => "fas fa-user-cog",
-        "url" => "/manager"
+        "url" => "/user"
     ],
     [
         "module" => "role",
-        "name" => "จัดการสิทธ์การใช้งาน",
+        "name" => "จัดการสิทธ์ผู้ใช้",
         "icon" => "fas fa-user-cog",
         "url" => "/role"
     ],
@@ -24,48 +24,48 @@ $menu = [
     //     "icon" => "fas fa-users",
     //     "url" => "/employee"
     // ],
-    [
-        "module" => "employee-schedule",
-        "name" => "ตารางงานของพนักงาน",
-        "icon" => "fas fa-calendar-day",
-        "url" => "/employee-schedule"
-    ],
-    [
-        "module" => "stock",
-        "name" => "จัดการข้อมูลสินค้าและผลิตภัณฑ์ภายในร้าน",
-        "icon" => "fas fa-box",
-        "url" => "/stock"
-    ],
-    [
-        "module" => "service",
-        "name" => "จัดการข้อมูลการบริการ",
-        "icon" => "fas fa-air-freshener",
-        "url" => "/service"
-    ],
-    [
-        "module" => "estimate",
-        "name" => "จัดการข้อมูลการประเมินใบหน้า",
-        "icon" => "fas fa-user-circle",
-        "url" => "/estimate"
-    ],
-    [
-        "module" => "promotion",
-        "name" => "จัดการโปรโมชั่น",
-        "icon" => "fas fa-tag",
-        "url" => "/promotion"
-    ],
-    [
-        "module" => "comment",
-        "name" => "จัดการความคิดเห็น",
-        "icon" => "fas fa-comments",
-        "url" => "/comment"
-    ],
-    [
-        "module" => "finance",
-        "name" => "ข้อมูลทางการเงิน",
-        "icon" => "fas fa-wallet",
-        "url" => "/finance"
-    ],
+    // [
+    //     "module" => "employee-schedule",
+    //     "name" => "ตารางงานของพนักงาน",
+    //     "icon" => "fas fa-calendar-day",
+    //     "url" => "/employee-schedule"
+    // ],
+    // [
+    //     "module" => "stock",
+    //     "name" => "จัดการข้อมูลสินค้าและผลิตภัณฑ์ภายในร้าน",
+    //     "icon" => "fas fa-box",
+    //     "url" => "/stock"
+    // ],
+    // [
+    //     "module" => "service",
+    //     "name" => "จัดการข้อมูลการบริการ",
+    //     "icon" => "fas fa-air-freshener",
+    //     "url" => "/service"
+    // ],
+    // [
+    //     "module" => "estimate",
+    //     "name" => "จัดการข้อมูลการประเมินใบหน้า",
+    //     "icon" => "fas fa-user-circle",
+    //     "url" => "/estimate"
+    // ],
+    // [
+    //     "module" => "promotion",
+    //     "name" => "จัดการโปรโมชั่น",
+    //     "icon" => "fas fa-tag",
+    //     "url" => "/promotion"
+    // ],
+    // [
+    //     "module" => "comment",
+    //     "name" => "จัดการความคิดเห็น",
+    //     "icon" => "fas fa-comments",
+    //     "url" => "/comment"
+    // ],
+    // [
+    //     "module" => "finance",
+    //     "name" => "ข้อมูลทางการเงิน",
+    //     "icon" => "fas fa-wallet",
+    //     "url" => "/finance"
+    // ],
 ];
 $session = explode(", " , $_SESSION['AD_PERMISSION']);
 function isActive($data)
@@ -92,7 +92,7 @@ function isActive($data)
             </a>
         </li>
         <li class="nav-item d-md-block d-none">
-            <a class="nav-link">เข้าสู่ระบบครั้งล่าสุด: <?php echo $_SESSION['AD_LOGIN'] ?> </a>
+            <a class="nav-link">เข้าสู่ระบบครั้งล่าสุด: <?= $_SESSION['AD_LOGIN'] ?> </a>
         </li>
     </ul>
 </nav>
@@ -108,11 +108,11 @@ function isActive($data)
     <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
-                <img src="../../assets/images/avatar5.png" class="img-circle elevation-2" alt="User Image">
+                <img src="<?= !empty($_SESSION['AD_IMAGE']) && $_SESSION['AD_IMAGE'] ? '/assets/uploads/user/' . $_SESSION['AD_IMAGE'] : '/assets/images/avatar.png' ?>" class="img-circle elevation-2" style="width: 2.1rem; height: 2.1rem;">
             </div>
             <div class="info">
-                <a href="/manager" class="d-block">
-                    <?php echo $_SESSION['AD_FIRSTNAME'] . ' ' . $_SESSION['AD_LASTNAME'] ?>
+                <a href="#" class="d-block">
+                    <?= $_SESSION['AD_FIRSTNAME'] . ' ' . $_SESSION['AD_LASTNAME'] ?>
                 </a>
             </div>
         </div>
@@ -122,9 +122,9 @@ function isActive($data)
                 <?php foreach ($menu as $item): ?>
                     <?php if (in_array($item['module'], $session)): ?>
                     <li class="nav-item">
-                        <a href="<?php echo $item['url'] ?>" class="nav-link <?php echo isActive(ltrim($item['url'], '/')) ?>">
-                            <i class="nav-icon <?php echo $item['icon'] ?>"></i>
-                            <p><?php echo $item['name'] ?></p>
+                        <a href="<?= $item['url'] ?>" class="nav-link <?= isActive(ltrim($item['url'], '/')) ?>">
+                            <i class="nav-icon <?= $item['icon'] ?>"></i>
+                            <p><?= $item['name'] ?></p>
                         </a>
                     </li>
                     <?php endif; ?>
