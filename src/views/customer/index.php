@@ -10,7 +10,7 @@ $title = 'จัดการข้อมูลลูกค้า | Mira ศู�
         </h4>
         <a href="/customer/add" class="btn btn-primary mt-3">
             <i class="fas fa-plus"></i>
-            เพิ่มข้อมูลลูกค้า
+            เพิ่มข้อมูล
         </a>
     </div>
     <div class="card-body">
