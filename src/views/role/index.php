@@ -10,7 +10,7 @@
         </a>
     </div>
     <div class="card-body">
-        <table id="roleTable" class="table table-hover" width="100%">
+        <table id="myTable" class="table table-hover" width="100%">
             <thead>
                 <tr>
                     <th>ลำดับ</th>
@@ -54,7 +54,7 @@
 
 <script>
     $(function() {
-        $('#roleTable').DataTable({
+        $('#myTable').DataTable({
             'responsive': true,
             'autoWidth': false,
             'language': {

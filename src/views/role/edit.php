@@ -4,8 +4,8 @@
             <i class="fas fa-tag"></i>
             แก้ไขสิทธ์ผู้ใช้
         </h4>
-        <a href="/role" class="btn btn-info my-3">
-            <i class="fas fa-list"></i>
+        <a href="/role" class="btn btn-secondary mt-3">
+            <i class="fas fa-arrow-left"></i>
             กลับหน้าหลัก
         </a>
     </div>

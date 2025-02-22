@@ -4,8 +4,8 @@
             <i class="fas fa-user-cog"></i>
             แก้ไขข้อมูลผู้ใช้
         </h4>
-        <a href="/user" class="btn btn-info my-3">
-            <i class="fas fa-list"></i>
+        <a href="/user" class="btn btn-secondary mt-3">
+            <i class="fas fa-arrow-left"></i>
             กลับหน้าหลัก
         </a>
     </div>

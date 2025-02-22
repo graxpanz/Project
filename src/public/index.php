@@ -33,6 +33,7 @@ require_once BASE_PATH . '/core/Redirect.php';
 
 // โหลด routes
 require_once BASE_PATH . '/routes/web.php';
+require_once BASE_PATH . '/routes/api.php';
 
 // สร้าง Router instance และ dispatch request
 $router = new Router(Route::getRoutes());

@@ -33,7 +33,7 @@ Route::get('/customer/add', 'CustomerController@add');
 Route::post('/customer/insert', 'CustomerController@insert');
 Route::get('/customer/edit/{id}', 'CustomerController@edit');
 Route::post('/customer/update', 'CustomerController@update');
-Route::get('/customer/update', 'CustomerController@update');
+Route::post('/customer/delete/{id}', 'CustomerController@delete');
 
 Route::get('/service', 'ServiceController@index');
 Route::get('/service/add', 'ServiceController@add');

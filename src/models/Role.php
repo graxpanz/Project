@@ -3,6 +3,7 @@ class Role {
     private $db;
     private $dbname = 'user_role';
     private $soft_delete = true;
+
     public function __construct() {
         $this->db = new Database();
     }

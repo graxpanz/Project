@@ -1,7 +1,3 @@
-<?php
-$title = 'จัดการผู้ใช้ | Mira ศูนย์ความงามครบวงจร';
-?>
-
 <div class="card shadow">
     <div class="card-header border-0 pt-4">
         <h4>
@@ -14,7 +10,7 @@ $title = 'จัดการผู้ใช้ | Mira ศูนย์ควา�
         </a>
     </div>
     <div class="card-body">
-        <table id="managerTable" class="table table-hover" width="100%">
+        <table id="myTable" class="table table-hover" width="100%">
             <thead>
                 <tr>
                     <th width="5%">ลำดับ</th>
@@ -97,7 +93,7 @@ $title = 'จัดการผู้ใช้ | Mira ศูนย์ควา�
         $('[data-toggle="tooltip"]').tooltip();
 
         // Initialize DataTable
-        $('#managerTable').DataTable({
+        $('#myTable').DataTable({
             'responsive': true,
             'autoWidth': false,
             'order': [

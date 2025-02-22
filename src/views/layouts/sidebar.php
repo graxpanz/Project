@@ -18,6 +18,12 @@ $menu = [
         "icon" => "fas fa-user-cog",
         "url" => "/role"
     ],
+    [
+        "module" => "customer",
+        "name" => "จัดการข้อมูลลูกค้า",
+        "icon" => "fas fa-users",
+        "url" => "/customer"
+    ],
     // [
     //     "module" => "employee",
     //     "name" => "จัดการข้อมูลพนักงาน",

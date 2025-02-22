@@ -1,43 +1,88 @@
 <?php
 // models/Customer.php
 
-class Customer{
+class Customer {
     private $db;
+    private $tablename = 'customer';
+    private $soft_delete = true;
 
     public function __construct() {
         $this->db = new Database();
     }
 
     public function getAllCustomer() {
-        $sql = "SELECT * FROM customer";
+        $sql = "SELECT * FROM {$this->tablename} WHERE deleted_at IS NULL";
         $stmt = $this->db->getConnection()->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getCustomerById($id) {
-        $sql = "SELECT * FROM customer WHERE customer_id = ?";
+        $sql = "SELECT * FROM {$this->tablename} WHERE customer_id = ? AND deleted_at IS NULL";
         $stmt = $this->db->getConnection()->prepare($sql);
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function insertCustomer($data) {
-        $sql = "INSERT INTO customer (name, surname, email, phone, age) VALUES (?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO {$this->tablename} (
+            email,
+            password,
+            firstname,
+            lastname,
+            phone,
+            birthdate,
+            address
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        
         $stmt = $this->db->getConnection()->prepare($sql);
-        $stmt->execute([$data['name'], $data['surname'], $data['email'], $data['phone'], $data['age']]);
+        $stmt->execute([
+            $data['email'],
+            $data['password'],
+            $data['firstname'],
+            $data['lastname'],
+            $data['phone'],
+            $data['birthdate'],
+            $data['address']
+        ]);
         return $this->db->getConnection()->lastInsertId();
     }
 
     public function updateCustomer($data) {
-        $sql = "UPDATE customer SET name = ?, surname = ?, email = ?, phone = ?, age = ? WHERE customer_id = ?";
+        $sql = "UPDATE {$this->tablename} SET 
+            email = ?,
+            firstname = ?,
+            lastname = ?,
+            phone = ?,
+            birthdate= ?,
+            address = ?,
+            is_active = ?
+            WHERE customer_id = ? AND deleted_at IS NULL";
+            
         $stmt = $this->db->getConnection()->prepare($sql);
-        return $stmt->execute([$data['name'], $data['surname'], $data['email'], $data['phone'], $data['age'],$data['customer_id']]);
+        return $stmt->execute([
+            $data['email'],
+            $data['firstname'],
+            $data['lastname'],
+            $data['phone'],
+            $data['birthdate'],
+            $data['address'],
+            $data['is_active'],
+            $data['customer_id']
+        ]);
     }
 
     public function deleteCustomer($id) {
-        $sql = "DELETE FROM customer WHERE customer_id = ?";
+        if ($this->soft_delete) {
+            $sql = "UPDATE {$this->tablename} SET 
+                deleted_at = NOW(),
+                is_active = '0' 
+                WHERE customer_id = ? AND deleted_at IS NULL";
+        } else {
+            $sql = "DELETE FROM {$this->tablename} WHERE customer_id = ?";
+        }
+        
         $stmt = $this->db->getConnection()->prepare($sql);
         return $stmt->execute([$id]);
     }
 }
-    ?>
+?>

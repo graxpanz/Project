@@ -1,6 +1,6 @@
 <?php
 class Controller {
-    protected $allowedRoutes = ['login', 'logout', 'forgot-password', 'assets']; // Add any public routes here
+    protected $allowedRoutes = ['login', 'logout', 'forgot-password', 'assets', 'api']; // Add any public routes here
 
     public function __construct() {
         if (session_status() === PHP_SESSION_NONE) {
@@ -39,6 +39,21 @@ class Controller {
         } else {
             throw new Exception("View file not found: {$viewPath}");
         }
+    }
+
+    public function json($data, $status = 200) {
+        header('Content-Type: application/json; charset=utf-8');
+        http_response_code($status);
+        
+        if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+            echo json_encode([
+                'error' => json_last_error_msg(),
+                'code' => json_last_error()
+            ]);
+        } else {
+            echo json_encode($data);
+        }
+        exit();
     }
 
     public function dateFormat($date) {
