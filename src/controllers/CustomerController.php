@@ -43,6 +43,12 @@ class CustomerController extends Controller {
             return;
         }
 
+        // Check if email already exists
+        if ($this->customerModel->isEmailExists($_POST['email'])) {
+            redirect()->with('error', 'อีเมลนี้ถูกใช้งานแล้ว')->back();
+            return;
+        }
+
         // Hash password
         $_POST['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
         
@@ -105,6 +111,12 @@ class CustomerController extends Controller {
             return;
         }
 
+        // Check if email already exists (excluding current customer)
+        if ($this->customerModel->isEmailExists($_POST['email'], $_POST['customer_id'])) {
+            redirect()->with('error', 'อีเมลนี้ถูกใช้งานแล้ว')->back();
+            return;
+        }
+
         // Validate birthdate
         $_POST['birthdate'] = $_POST['birthdate'] ? $_POST['birthdate'] : NULL;
 
@@ -120,8 +132,6 @@ class CustomerController extends Controller {
             }
         } catch (Exception $e) {
             // Log error
-            print_r( $e->getMessage());
-            die();
             error_log("Error updating customer: " . $e->getMessage());
             redirect()->with('error', 'เกิดข้อผิดพลาดในการอัปเดตข้อมูลลูกค้า')->back();
         }
@@ -202,6 +212,14 @@ class CustomerController extends Controller {
                 ]);
             }
 
+            // Check if email already exists
+            if ($this->customerModel->isEmailExists($data['email'])) {
+                $this->json([
+                    'status' => false,
+                    'message' => 'Email already exists'
+                ]);
+            }
+
             // Hash password
             $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
             
@@ -224,5 +242,168 @@ class CustomerController extends Controller {
                 'error' => $e->getMessage()
             ]);
         }
+    }
+
+    public function api_login() {
+        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+            $this->json([
+                'status' => false,
+                'message' => 'Invalid request method'
+            ]);
+        }
+
+        try {
+            $data = json_decode(file_get_contents('php://input'), true);
+            
+            // Validate input
+            if (empty($data['email']) || empty($data['password'])) {
+                $this->json([
+                    'status' => false,
+                    'message' => 'Email and password are required'
+                ]);
+            }
+
+            // Get customer by email
+            $customer = $this->customerModel->getCustomerByEmail($data['email']);
+            
+            // Verify customer exists and password is correct
+            if (!$customer || !password_verify($data['password'], $customer['password'])) {
+                $this->json([
+                    'status' => false,
+                    'message' => 'Invalid email or password'
+                ]);
+            }
+
+            // Check if customer is active
+            if ($customer['is_active'] != '1') {
+                $this->json([
+                    'status' => false,
+                    'message' => 'Account is inactive'
+                ]);
+            }
+
+            // Generate token
+            $token = bin2hex(random_bytes(32));
+            
+            // Create session
+            $this->customerModel->createSession(
+                $customer['customer_id'],
+                $token,
+                $_SERVER['REMOTE_ADDR'],
+                $_SERVER['HTTP_USER_AGENT'] ?? ''
+            );
+
+            // Remove sensitive data
+            unset($customer['password']);
+            unset($customer['deleted_at']);
+            
+            $this->json([
+                'status' => true,
+                'message' => 'Login successful',
+                'data' => [
+                    'token' => $token,
+                    'customer' => $customer
+                ]
+            ]);
+
+        } catch (Exception $e) {
+            error_log("API login error: " . $e->getMessage());
+            $this->json([
+                'status' => false,
+                'message' => 'Login failed',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function api_logout() {
+        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+            $this->json([
+                'status' => false,
+                'message' => 'Invalid request method'
+            ]);
+        }
+
+        try {
+            $token = $this->getAuthToken();
+            if (!$token) {
+                $this->json([
+                    'status' => false,
+                    'message' => 'No authentication token provided'
+                ]);
+            }
+
+            $this->customerModel->deleteSession($token);
+            
+            $this->json([
+                'status' => true,
+                'message' => 'Logout successful'
+            ]);
+
+        } catch (Exception $e) {
+            error_log("API logout error: " . $e->getMessage());
+            $this->json([
+                'status' => false,
+                'message' => 'Logout failed',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function api_customer() {
+        if ($_SERVER['REQUEST_METHOD'] != 'GET') {
+            $this->json([
+                'status' => false,
+                'message' => 'Invalid request method'
+            ]);
+        }
+
+        try {
+            $token = $this->getAuthToken();
+            if (!$token) {
+                $this->json([
+                    'status' => false,
+                    'message' => 'No authentication token provided'
+                ]);
+            }
+
+            $sessionData = $this->customerModel->validateSession($token);
+            if (!$sessionData) {
+                $this->json([
+                    'status' => false,
+                    'message' => 'Invalid or expired token'
+                ]);
+            }
+
+            // Remove sensitive data
+            unset($sessionData['password']);
+            unset($sessionData['deleted_at']);
+            unset($sessionData['token']);
+            unset($sessionData['session_id']);
+            
+            $this->json([
+                'status' => true,
+                'message' => 'Customer info retrieved successfully',
+                'data' => $sessionData
+            ]);
+
+        } catch (Exception $e) {
+            error_log("API customer info error: " . $e->getMessage());
+            $this->json([
+                'status' => false,
+                'message' => 'Failed to retrieve customer info',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    private function getAuthToken() {
+        $headers = getallheaders();
+        if (isset($headers['Authorization'])) {
+            if (preg_match('/Bearer\s(\S+)/', $headers['Authorization'], $matches)) {
+                return $matches[1];
+            }
+        }
+        return null;
     }
 }

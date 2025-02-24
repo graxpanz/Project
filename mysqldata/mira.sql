@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: database
--- Generation Time: Feb 22, 2025 at 10:47 AM
+-- Generation Time: Feb 24, 2025 at 12:13 PM
 -- Server version: 11.6.2-MariaDB-ubu2404
 -- PHP Version: 8.2.27
 
@@ -50,6 +50,30 @@ INSERT INTO `customer` (`customer_id`, `email`, `password`, `firstname`, `lastna
 (1, 'johndoe@gmail.com', '$2y$10$Yy6RaX9SXoE/l3NAkdQ9yu/aE81/LWftHbl9l7wVBGdv5lDGB99S6', 'Johnz', 'Doe', '0987654321', NULL, 'John doe home', '1', NULL, '2025-02-22 09:39:37', '2025-02-22 10:19:53'),
 (2, 'askjfh@mail.com', '$2y$10$y.2kcJX4jTGVY5/E1vaiZO1cHNnsBrjI0a6Ovsl30MQqePaH1g6.m', 'alksfdh', 'kasjfh', '0987654333', '1993-11-12', 'asklfjlkasf', '0', '2025-02-22 10:29:41', '2025-02-22 10:25:57', '2025-02-22 10:29:41'),
 (3, 'tchinlapha@gmail.com', '$2y$10$qjwuDNu1m1sVvEnTEZfQmuy9SSsLKdt7eceGmhNgu43rbAgjwHp8.', 'Thanin', 'Chinlapha', '0825157905', '1993-12-11', 'CNX', '1', NULL, '2025-02-22 10:32:53', '2025-02-22 10:32:53');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `customer_session`
+--
+
+CREATE TABLE `customer_session` (
+  `session_id` varchar(255) NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `ip_address` varchar(45) DEFAULT NULL,
+  `user_agent` varchar(255) DEFAULT NULL,
+  `last_activity` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `expired_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+--
+-- Dumping data for table `customer_session`
+--
+
+INSERT INTO `customer_session` (`session_id`, `customer_id`, `token`, `ip_address`, `user_agent`, `last_activity`, `created_at`, `expired_at`) VALUES
+('d68f569b293ad683ffca1010e3b0b976', 3, 'fb5c9be2dfc177483d614902a9ffd4a6ea882a9f1bb9cd4c95eee84e96bdd96d', '172.18.0.1', 'PostmanRuntime/7.43.0', '2025-02-24 12:11:21', '2025-02-24 12:11:21', '2025-03-26 12:11:21');
 
 -- --------------------------------------------------------
 
@@ -119,6 +143,14 @@ ALTER TABLE `customer`
   ADD PRIMARY KEY (`customer_id`);
 
 --
+-- Indexes for table `customer_session`
+--
+ALTER TABLE `customer_session`
+  ADD PRIMARY KEY (`session_id`),
+  ADD KEY `idx_token` (`token`),
+  ADD KEY `idx_customer` (`customer_id`);
+
+--
 -- Indexes for table `user`
 --
 ALTER TABLE `user`
@@ -138,7 +170,7 @@ ALTER TABLE `user_role`
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `user`
@@ -151,6 +183,16 @@ ALTER TABLE `user`
 --
 ALTER TABLE `user_role`
   MODIFY `user_role_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `customer_session`
+--
+ALTER TABLE `customer_session`
+  ADD CONSTRAINT `customer_session_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`customer_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
