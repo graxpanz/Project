@@ -69,4 +69,31 @@ class UserController extends Controller {
             redirect()->with('error', 'เกิดข้อผิดพลาดในการลบข้อมูล')->back();
         }
     }
+
+    public function api_employee() {
+        if ($_SERVER['REQUEST_METHOD'] != 'GET') {
+            $this->json([
+                'status' => false,
+                'message' => 'Invalid request method'
+            ]);
+        }
+        try {
+            $employees = $this->userModel->getAllEmployees();
+            $this->json([
+                'status' => true,
+                'message' => 'Employees data retrieved successfully',
+                'data' => $employees
+            ]);
+
+        } catch (Exception $e) {
+            error_log("API service error: " . $e->getMessage());
+            $this->json([
+                'status' => false,
+                'message' => 'Failed to retrieve employees data',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+
 }

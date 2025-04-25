@@ -1,9 +1,9 @@
 <?php
-class Promotion
+class Booking
 {
     private $db;
-    private $dbname = 'promotion';
-    private $uploadPath = 'assets/uploads/promotion/';
+    private $dbname = 'service';
+    private $uploadPath = 'assets/uploads/service/';
     private $soft_delete = true;
 
     public function __construct()
@@ -11,60 +11,29 @@ class Promotion
         $this->db = new Database();
     }
 
-    public function getAllPromotions()
+    public function getAllServices()
     {
-        $sql = "SELECT * FROM $this->dbname WHERE deleted_at IS NULL";
+        $sql = "SELECT s.*, st.name as service_type_name
+        FROM $this->dbname s
+        LEFT JOIN service_type st ON s.service_type_id = st.service_type_id  
+        WHERE s.deleted_at IS NULL";
         $stmt = $this->db->getConnection()->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getPromotionById($id)
+    public function getServiceById($id)
     {
-        $sql = "SELECT * FROM $this->dbname WHERE promotion_id = ? AND deleted_at IS NULL";
+        $sql = "SELECT * FROM $this->dbname WHERE service_id = ? AND deleted_at IS NULL";
         $stmt = $this->db->getConnection()->prepare($sql);
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getPromotionRedeem($data)
-    {
-        $sql = "SELECT p.*, 
-                    (SELECT COUNT(*) FROM booking b 
-                    WHERE b.promotion_id = p.promotion_id 
-                    AND b.customer_id = ? 
-                    AND b.status != 'cancelled') as usage_count,
-                    NOW() BETWEEN p.start_datetime AND p.end_datetime as is_available
-                FROM $this->dbname p 
-                WHERE p.code = ? 
-                AND p.deleted_at IS NULL";
-
-        $stmt = $this->db->getConnection()->prepare($sql);
-        $stmt->execute([$data['customer_id'], $data['code']]);
-        $promotion = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($promotion) {
-            $promotion['already_used'] = ($promotion['usage_count'] > 0);
-            if (!$promotion['is_available']) {
-                $promotion = false;
-            }
-        }
-
-        return $promotion;
-    }
-
-    public function getCurrentPromotions()
-    {
-        $sql = "SELECT * FROM $this->dbname WHERE deleted_at IS NULL 
-                AND NOW() BETWEEN start_datetime AND end_datetime";
-        $stmt = $this->db->getConnection()->query($sql);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function insertPromotion($data)
+    public function insertService($data)
     {
         $sql = "INSERT INTO $this->dbname (
-            image, name, description, discount, code, start_datetime, end_datetime, is_active, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+            service_type_id, image, name, description, price, time, is_active, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
 
         $stmt = $this->db->getConnection()->prepare($sql);
 
@@ -75,41 +44,38 @@ class Promotion
         }
 
         return $stmt->execute([
+            $data['service_type_id'],
             $image,
             $data['name'],
             $data['description'],
-            $data['discount'],
-            $data['code'],
-            $data['start_datetime'],
-            $data['end_datetime'],
+            $data['price'],
+            $data['time'],
             $data['is_active'] ?? 1
         ]);
     }
 
-    public function updatePromotion($data)
+    public function updateService($data)
     {
-        $currentPromotion = $this->getPromotionById($data['promotion_id']);
-        if (!$currentPromotion) {
+        $currentService = $this->getServiceById($data['service_id']);
+        if (!$currentService) {
             return false;
         }
 
         $sql = "UPDATE $this->dbname SET 
+            service_type_id = ?,
             name = ?,
             description = ?,
-            discount = ?,
-            code = ?,
-            start_datetime = ?,
-            end_datetime = ?,
+            price = ?,
+            time = ?,
             is_active = ?,
             updated_at = NOW()";
 
         $params = [
+            $data['service_type_id'],
             $data['name'],
             $data['description'],
-            $data['discount'],
-            $data['code'],
-            $data['start_datetime'],
-            $data['end_datetime'],
+            $data['price'],
+            $data['time'],
             $data['is_active']
         ];
 
@@ -122,8 +88,8 @@ class Promotion
                 $params[] = $newImage;
 
                 // ลบรูปเก่า
-                if (!empty($currentPromotion['image'])) {
-                    $oldImagePath = $this->uploadPath . $currentPromotion['image'];
+                if (!empty($currentService['image'])) {
+                    $oldImagePath = $this->uploadPath . $currentService['image'];
                     if (file_exists($oldImagePath)) {
                         unlink($oldImagePath);
                     }
@@ -131,22 +97,22 @@ class Promotion
             }
         }
 
-        $sql .= " WHERE promotion_id = ?";
-        $params[] = $data['promotion_id'];
+        $sql .= " WHERE service_id = ?";
+        $params[] = $data['service_id'];
 
         $stmt = $this->db->getConnection()->prepare($sql);
         return $stmt->execute($params);
     }
 
-    public function deletePromotion($id)
+    public function deleteService($id)
     {
         if ($this->soft_delete) {
             $sql = "UPDATE $this->dbname SET 
                 deleted_at = NOW(),
                 is_active = '0' 
-                WHERE promotion_id = ? AND deleted_at IS NULL";
+                WHERE service_id = ? AND deleted_at IS NULL";
         } else {
-            $sql = "DELETE FROM $this->dbname WHERE promotion_id = ?";
+            $sql = "DELETE FROM $this->dbname WHERE service_id = ?";
         }
 
         $stmt = $this->db->getConnection()->prepare($sql);

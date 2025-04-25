@@ -1,29 +1,34 @@
 <?php
 // models/Customer.php
 
-class Customer {
+class Customer
+{
     private $db;
     private $dbname = 'customer';
     private $soft_delete = true;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = new Database();
     }
 
-    public function getAllCustomer() {
+    public function getAllCustomer()
+    {
         $sql = "SELECT * FROM $this->dbname WHERE deleted_at IS NULL";
         $stmt = $this->db->getConnection()->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getCustomerById($id) {
+    public function getCustomerById($id)
+    {
         $sql = "SELECT * FROM $this->dbname WHERE customer_id = ? AND deleted_at IS NULL";
         $stmt = $this->db->getConnection()->prepare($sql);
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function insertCustomer($data) {
+    public function insertCustomer($data)
+    {
         $sql = "INSERT INTO $this->dbname (
             email,
             password,
@@ -33,7 +38,7 @@ class Customer {
             birthdate,
             address
         ) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        
+
         $stmt = $this->db->getConnection()->prepare($sql);
         $stmt->execute([
             $data['email'],
@@ -47,7 +52,8 @@ class Customer {
         return $this->db->getConnection()->lastInsertId();
     }
 
-    public function updateCustomer($data) {
+    public function updateCustomer($data)
+    {
         $sql = "UPDATE $this->dbname SET 
             email = ?,
             firstname = ?,
@@ -57,7 +63,7 @@ class Customer {
             address = ?,
             is_active = ?
             WHERE customer_id = ? AND deleted_at IS NULL";
-            
+
         $stmt = $this->db->getConnection()->prepare($sql);
         return $stmt->execute([
             $data['email'],
@@ -71,7 +77,8 @@ class Customer {
         ]);
     }
 
-    public function deleteCustomer($id) {
+    public function deleteCustomer($id)
+    {
         if ($this->soft_delete) {
             $sql = "UPDATE $this->dbname SET 
                 deleted_at = NOW(),
@@ -80,13 +87,14 @@ class Customer {
         } else {
             $sql = "DELETE FROM $this->dbname WHERE customer_id = ?";
         }
-        
+
         $stmt = $this->db->getConnection()->prepare($sql);
         return $stmt->execute([$id]);
     }
 
-    
-    public function isEmailExists($email, $excludeCustomerId = null) {
+
+    public function isEmailExists($email, $excludeCustomerId = null)
+    {
         if ($excludeCustomerId) {
             $sql = "SELECT COUNT(*) FROM $this->dbname 
                     WHERE email = ? AND customer_id != ? AND deleted_at IS NULL";
@@ -101,14 +109,16 @@ class Customer {
         return $stmt->fetchColumn() > 0;
     }
 
-    public function getCustomerByEmail($email) {
+    public function getCustomerByEmail($email)
+    {
         $sql = "SELECT * FROM $this->dbname WHERE email = ? AND deleted_at IS NULL";
         $stmt = $this->db->getConnection()->prepare($sql);
         $stmt->execute([$email]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function createSession($customerId, $token, $ipAddress, $userAgent) {
+    public function createSession($customerId, $token, $ipAddress, $userAgent)
+    {
         $sql = "INSERT INTO customer_session (
             session_id,
             customer_id,
@@ -117,7 +127,7 @@ class Customer {
             user_agent,
             expired_at
         ) VALUES (?, ?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 30 DAY))";
-        
+
         $sessionId = bin2hex(random_bytes(16));
         $stmt = $this->db->getConnection()->prepare($sql);
         return $stmt->execute([
@@ -129,7 +139,8 @@ class Customer {
         ]);
     }
 
-    public function validateSession($token) {
+    public function validateSession($token)
+    {
         $sql = "SELECT cs.*, c.* 
                 FROM customer_session cs 
                 JOIN $this->dbname c ON cs.customer_id = c.customer_id 
@@ -137,16 +148,16 @@ class Customer {
                 AND cs.expired_at > NOW() 
                 AND c.deleted_at IS NULL 
                 AND c.is_active = '1'";
-        
+
         $stmt = $this->db->getConnection()->prepare($sql);
         $stmt->execute([$token]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function deleteSession($token) {
+    public function deleteSession($token)
+    {
         $sql = "DELETE FROM customer_session WHERE token = ?";
         $stmt = $this->db->getConnection()->prepare($sql);
         return $stmt->execute([$token]);
     }
 }
-?>

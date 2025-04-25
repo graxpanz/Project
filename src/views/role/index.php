@@ -24,18 +24,18 @@
             <tbody>
                 <?php foreach ($roles as $index => $role): ?>
                     <tr>
-                        <td class="text-center align-middle"><?= $index + 1; ?></td>
-                        <td class="text-center align-middle"><?= htmlspecialchars($role['name']); ?></td>
-                        <td class="align-middle"><?php $this->showPermission($role['permission']) ?></td>
-                        <td class="text-center align-middle">
+                        <td class=""><?= $index + 1; ?></td>
+                        <td class=""><?= htmlspecialchars($role['name']); ?></td>
+                        <td class=""><?php $this->showPermission($role['permission']) ?></td>
+                        <td class="">
                             <?php if ($role['is_active']) { ?>
                                 <span class="badge badge-success">เปิดใช้งาน</span>
                             <?php } else { ?>
                                 <span class="badge badge-danger">ปิดใช้งาน</span>
                             <?php } ?>
                         </td>
-                        <td class="text-center align-middle"><?= $this->dateFormat($role['updated_at']); ?></td>
-                        <td class="text-center align-middle">
+                        <td class=""><?= $this->dateFormat($role['updated_at']); ?></td>
+                        <td class="">
                             <a href="/role/edit/<?= $role['user_role_id']; ?>" class="btn btn-warning text-white">
                                 <i class="far fa-edit"></i> แก้ไข
                             </a>

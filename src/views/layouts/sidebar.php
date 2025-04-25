@@ -36,6 +36,12 @@ $menu = [
         "icon" => "fas fa-air-freshener",
         "url" => "/service"
     ],
+    [
+        "module" => "promotion",
+        "name" => "จัดการโปรโมชั่น",
+        "icon" => "fas fa-tag",
+        "url" => "/promotion"
+    ],
     // [
     //     "module" => "employee",
     //     "name" => "จัดการข้อมูลพนักงาน",
@@ -65,12 +71,6 @@ $menu = [
     //     "name" => "จัดการข้อมูลการประเมินใบหน้า",
     //     "icon" => "fas fa-user-circle",
     //     "url" => "/estimate"
-    // ],
-    // [
-    //     "module" => "promotion",
-    //     "name" => "จัดการโปรโมชั่น",
-    //     "icon" => "fas fa-tag",
-    //     "url" => "/promotion"
     // ],
     // [
     //     "module" => "comment",

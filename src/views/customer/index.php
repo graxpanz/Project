@@ -28,31 +28,31 @@ $title = 'จัดการข้อมูลลูกค้า | Mira ศู�
             <tbody>
                 <?php foreach ($customers as $index => $customer): ?>
                     <tr>
-                        <td class="text-center align-middle"><?= $index + 1 ?></td>
-                        <td class="align-middle">
+                        <td class=""><?= $index + 1 ?></td>
+                        <td class="">
                             <div class="d-flex flex-column">
                                 <span class="font-weight-bold">
                                     <?= htmlspecialchars($customer['firstname'] . ' ' . $customer['lastname']) ?>
                                 </span>
                             </div>
                         </td>
-                        <td class="align-middle">
+                        <td class="">
                             <div class="d-flex flex-column">
                                 <span><i class="fas fa-envelope mr-2"></i><?= $customer['email'] ? htmlspecialchars($customer['email']) : 'ไม่มีข้อมูลอีเมล' ?></span>
                                 <span><i class="fas fa-phone mr-2"></i><?= $customer['phone'] ? htmlspecialchars($customer['phone']) : 'ไม่มีข้อมูลเบอร์โทรศัพท์' ?></span>
                             </div>
                         </td>
-                        <td class="align-middle">
+                        <td class="">
                             <?= $customer['address'] ? htmlspecialchars($customer['address']) : 'ไม่มีข้อมูลที่อยู่' ?>
                         </td>
-                        <td class="align-middle">
+                        <td class="">
                             <?php if ($customer['is_active'] == '1'): ?>
                                 <span class="badge badge-success">เปิดใช้งาน</span>
                             <?php else: ?>
                                 <span class="badge badge-danger">ปิดใช้งาน</span>
                             <?php endif; ?>
                         </td>
-                        <td class="text-center align-middle">
+                        <td class="">
                             <a href="/customer/edit/<?= $customer['customer_id']; ?>" class="btn btn-warning text-white">
                                 <i class="far fa-edit"></i> แก้ไข
                             </a>

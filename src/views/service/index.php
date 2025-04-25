@@ -26,35 +26,35 @@
             <tbody>
                 <?php foreach ($services as $index => $service): ?>
                     <tr>
-                        <td class="text-center align-middle"><?= $index + 1 ?></td>
-                        <td class="align-middle">
+                        <td class=""><?= $index + 1 ?></td>
+                        <td class="">
                             <img src="<?= !empty($service['image']) && $service['image'] ? '/assets/uploads/service/' . $service['image'] : '/assets/images/no-image.jpg' ?>"
                                 alt="Service"
                                 class="img-thumbnail"
                                 style="width: 120px; height: auto; object-fit: cover;">
                         </td>
-                        <td class="align-middle">
+                        <td class="">
                             <?= htmlspecialchars($service['name']) ?>
                         </td>
-                        <td class="align-middle">
+                        <td class="">
                             <?= htmlspecialchars($service['service_type_name']) ?>
                         </td>
-                        <td class="align-middle">
+                        <td class="">
                             <div class="d-flex flex-column">
                                 <span>ราคา: <?= htmlspecialchars($service['price']) ?> บาท</span>
                                 <span>เวลาในการบริการ: <?= htmlspecialchars($service['time']) ?> นาที</span>
                                 <span>รายละเอียด: <?= htmlspecialchars($service['description']) ?></span>
                             </div>
                         </td>
-                        <td class="align-middle">
+                        <td class="">
                             <?php if ($service['is_active'] == 1): ?>
                                 <span class="badge badge-success">เปิดใช้งาน</span>
                             <?php else: ?>
                                 <span class="badge badge-danger">ปิดใช้งาน</span>
                             <?php endif; ?>
                         </td>
-                        <td class="text-center align-middle"><?= $this->dateFormat($service['updated_at']); ?></td>
-                        <td class="text-center align-middle">
+                        <td class=""><?= $this->dateFormat($service['updated_at']); ?></td>
+                        <td class="">
                             <a href="/service/edit/<?php echo $service['service_id']; ?>" class="btn btn-warning text-white">
                                 <i class="far fa-edit"></i> แก้ไข
                             </a>

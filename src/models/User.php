@@ -33,6 +33,17 @@ class User
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getAllEmployees()
+    {
+        $sql = "SELECT u.user_id, u.user_role_id, u.image, u.firstname, u.lastname, r.name as role_name 
+                FROM $this->dbname u 
+                LEFT JOIN user_role r ON u.user_role_id = r.user_role_id 
+                WHERE u.deleted_at IS NULL AND u.user_role_id != 1
+                ORDER BY u.created_at ASC";
+        $stmt = $this->db->getConnection()->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getUserById($id)
     {
         $sql = "SELECT u.*, r.name as role_name 
@@ -159,7 +170,7 @@ class User
         } else {
             $sql = "DELETE FROM $this->dbname WHERE user_id = ?";
         }
-        
+
         $stmt = $this->db->getConnection()->prepare($sql);
         return $stmt->execute([$id]);
     }

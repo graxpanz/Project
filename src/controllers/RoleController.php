@@ -85,6 +85,10 @@ class RoleController extends Controller
 
     public function delete($id)
     {
+        if ($id == 1) {
+            redirect()->with('error', 'ไม่สามารถลบสิทธ์ผู้ใช้ "ผู้ดูแลระบบ" ได้')->back();
+        }
+
         if ($this->roleModel->deleteRole($id)) {
             redirect()->with('success', 'ลบข้อข้อมูลสิทธ์ผู้ใช้สำเร็จ')->to('/role');
         } else {

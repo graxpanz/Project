@@ -47,7 +47,7 @@ class ServiceType
         description = ?,
         is_active = ?
         WHERE service_type_id = ? AND deleted_at IS NULL";
-        
+
         $stmt = $this->db->getConnection()->prepare($sql);
         return $stmt->execute([
             $data['name'],
@@ -67,7 +67,7 @@ class ServiceType
         } else {
             $sql = "DELETE FROM $this->dbname WHERE service_type_id = ?";
         }
-        
+
         $stmt = $this->db->getConnection()->prepare($sql);
         return $stmt->execute([$id]);
     }
