@@ -83,70 +83,70 @@ class User
 
     public function updateUser($data, $files = null)
     {
-            // ตรวจสอบว่ามีผู้ใช้อยู่จริง
-            $currentUser = $this->getUserById($data['user_id']);
-            if (!$currentUser) {
-                return false;
-            }
+        // ตรวจสอบว่ามีผู้ใช้อยู่จริง
+        $currentUser = $this->getUserById($data['user_id']);
+        if (!$currentUser) {
+            return false;
+        }
 
-            // ตรวจสอบ username ซ้ำ (เฉพาะกรณีที่เปลี่ยน username)
-            if ($data['username'] !== $currentUser['username'] && $this->isUsernameExists($data['username'])) {
-                return false;
-            }
+        // ตรวจสอบ username ซ้ำ (เฉพาะกรณีที่เปลี่ยน username)
+        if ($data['username'] !== $currentUser['username'] && $this->isUsernameExists($data['username'])) {
+            return false;
+        }
 
-            $sql = "UPDATE $this->dbname SET 
-                firstname = ?,
-                lastname = ?,
-                email = ?,
-                phone = ?,
-                birthdate = ?,
-                address = ?,
-                username = ?,
-                user_role_id = ?,
-                is_active = ?,
-                updated_at = NOW()";
+        $sql = "UPDATE $this->dbname SET 
+            firstname = ?,
+            lastname = ?,
+            email = ?,
+            phone = ?,
+            birthdate = ?,
+            address = ?,
+            username = ?,
+            user_role_id = ?,
+            is_active = ?,
+            updated_at = NOW()";
 
-            $params = [
-                $data['firstname'],
-                $data['lastname'],
-                $data['email'],
-                $data['phone'],
-                $data['birthdate'],
-                $data['address'],
-                $data['username'],
-                $data['user_role_id'],
-                $data['is_active']
-            ];
+        $params = [
+            $data['firstname'],
+            $data['lastname'],
+            $data['email'],
+            $data['phone'],
+            $data['birthdate'],
+            $data['address'],
+            $data['username'],
+            $data['user_role_id'],
+            $data['is_active']
+        ];
 
-            // เพิ่ม password ถ้ามีการส่งมา
-            if (!empty($data['password'])) {
-                $sql .= ", password = ?";
-                $params[] = password_hash($data['password'], PASSWORD_DEFAULT);
-            }
+        // เพิ่ม password ถ้ามีการส่งมา
+        if (!empty($data['password'])) {
+            $sql .= ", password = ?";
+            $params[] = password_hash($data['password'], PASSWORD_DEFAULT);
+        }
 
-            // จัดการรูปภาพใหม่
-            if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                // อัพโหลดรูปใหม่
-                $newImage = $this->uploadImage($_FILES['image']);
-                if ($newImage) {
-                    $sql .= ", image = ?";
-                    $params[] = $newImage;
+        // จัดการรูปภาพใหม่
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            // อัพโหลดรูปใหม่
+            $newImage = $this->uploadImage($_FILES['image']);
+            if ($newImage) {
+                $sql .= ", image = ?";
+                $params[] = $newImage;
 
-                    // ลบรูปเก่า
-                    if (!empty($currentUser['image'])) {
-                        $oldImagePath = $this->uploadPath . $currentUser['image'];
-                        if (file_exists($oldImagePath)) {
-                            unlink($oldImagePath);
-                        }
+                // ลบรูปเก่า
+                if (!empty($currentUser['image'])) {
+                    $oldImagePath = $this->uploadPath . $currentUser['image'];
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
                     }
                 }
             }
+        }
 
-            $sql .= " WHERE user_id = ?";
-            $params[] = $data['user_id'];
+        $sql .= " WHERE user_id = ?";
+        $params[] = $data['user_id'];
 
-            $stmt = $this->db->getConnection()->prepare($sql);
-            return $stmt->execute($params);
+        $stmt = $this->db->getConnection()->prepare($sql);
+        return $stmt->execute($params);
     }
 
     public function deleteUser($id)

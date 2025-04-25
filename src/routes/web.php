@@ -35,6 +35,13 @@ Route::get('/customer/edit/{id}', 'CustomerController@edit');
 Route::post('/customer/update', 'CustomerController@update');
 Route::post('/customer/delete/{id}', 'CustomerController@delete');
 
+Route::get('/service_type', 'ServiceTypeController@index');
+Route::get('/service_type/add', 'ServiceTypeController@add');
+Route::post('/service_type/insert', 'ServiceTypeController@insert');
+Route::get('/service_type/edit/{id}', 'ServiceTypeController@edit');
+Route::post('/service_type/update', 'ServiceTypeController@update');
+Route::post('/service_type/delete/{id}', 'ServiceTypeController@delete');
+
 Route::get('/service', 'ServiceController@index');
 Route::get('/service/add', 'ServiceController@add');
 Route::post('/service/insert', 'ServiceController@insert');

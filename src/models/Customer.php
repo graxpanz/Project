@@ -3,7 +3,7 @@
 
 class Customer {
     private $db;
-    private $tablename = 'customer';
+    private $dbname = 'customer';
     private $soft_delete = true;
 
     public function __construct() {
@@ -11,20 +11,20 @@ class Customer {
     }
 
     public function getAllCustomer() {
-        $sql = "SELECT * FROM {$this->tablename} WHERE deleted_at IS NULL";
+        $sql = "SELECT * FROM $this->dbname WHERE deleted_at IS NULL";
         $stmt = $this->db->getConnection()->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getCustomerById($id) {
-        $sql = "SELECT * FROM {$this->tablename} WHERE customer_id = ? AND deleted_at IS NULL";
+        $sql = "SELECT * FROM $this->dbname WHERE customer_id = ? AND deleted_at IS NULL";
         $stmt = $this->db->getConnection()->prepare($sql);
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function insertCustomer($data) {
-        $sql = "INSERT INTO {$this->tablename} (
+        $sql = "INSERT INTO $this->dbname (
             email,
             password,
             firstname,
@@ -48,7 +48,7 @@ class Customer {
     }
 
     public function updateCustomer($data) {
-        $sql = "UPDATE {$this->tablename} SET 
+        $sql = "UPDATE $this->dbname SET 
             email = ?,
             firstname = ?,
             lastname = ?,
@@ -73,12 +73,12 @@ class Customer {
 
     public function deleteCustomer($id) {
         if ($this->soft_delete) {
-            $sql = "UPDATE {$this->tablename} SET 
+            $sql = "UPDATE $this->dbname SET 
                 deleted_at = NOW(),
                 is_active = '0' 
                 WHERE customer_id = ? AND deleted_at IS NULL";
         } else {
-            $sql = "DELETE FROM {$this->tablename} WHERE customer_id = ?";
+            $sql = "DELETE FROM $this->dbname WHERE customer_id = ?";
         }
         
         $stmt = $this->db->getConnection()->prepare($sql);
@@ -88,12 +88,12 @@ class Customer {
     
     public function isEmailExists($email, $excludeCustomerId = null) {
         if ($excludeCustomerId) {
-            $sql = "SELECT COUNT(*) FROM {$this->tablename} 
+            $sql = "SELECT COUNT(*) FROM $this->dbname 
                     WHERE email = ? AND customer_id != ? AND deleted_at IS NULL";
             $stmt = $this->db->getConnection()->prepare($sql);
             $stmt->execute([$email, $excludeCustomerId]);
         } else {
-            $sql = "SELECT COUNT(*) FROM {$this->tablename} 
+            $sql = "SELECT COUNT(*) FROM $this->dbname 
                     WHERE email = ? AND deleted_at IS NULL";
             $stmt = $this->db->getConnection()->prepare($sql);
             $stmt->execute([$email]);
@@ -102,7 +102,7 @@ class Customer {
     }
 
     public function getCustomerByEmail($email) {
-        $sql = "SELECT * FROM {$this->tablename} WHERE email = ? AND deleted_at IS NULL";
+        $sql = "SELECT * FROM $this->dbname WHERE email = ? AND deleted_at IS NULL";
         $stmt = $this->db->getConnection()->prepare($sql);
         $stmt->execute([$email]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -132,7 +132,7 @@ class Customer {
     public function validateSession($token) {
         $sql = "SELECT cs.*, c.* 
                 FROM customer_session cs 
-                JOIN {$this->tablename} c ON cs.customer_id = c.customer_id 
+                JOIN $this->dbname c ON cs.customer_id = c.customer_id 
                 WHERE cs.token = ? 
                 AND cs.expired_at > NOW() 
                 AND c.deleted_at IS NULL 

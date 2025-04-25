@@ -2,9 +2,9 @@
     <div class="card-header border-0 pt-4">
         <h4>
             <i class="fas fa-user-cog"></i>
-            จัดการข้อมูลการบริการ
+            จัดการประเภทของบริการ
         </h4>
-        <a href="/service/add" class="btn btn-primary mt-3">
+        <a href="/service_type/add" class="btn btn-primary mt-3">
             <i class="fas fa-plus"></i>
             เพิ่มข้อมูล
         </a>
@@ -14,37 +14,22 @@
             <thead>
                 <tr>
                     <th width="5%">ลำดับ</th>
-                    <th width="10%">รูปภาพ</th>
-                    <th width="15%">ชื่อบริการ</th>
-                    <th width="10%">ประเภท</th>
-                    <th width="20%">รายละเอียด</th>
+                    <th width="20%">ประเภท</th>
+                    <th width="35%">รายละเอียด</th>
                     <th width="10%">สถานะ</th>
                     <th width="15%">อัพเดทล่าสุด</th>
                     <th width="15%"></th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($services as $index => $service): ?>
+                <?php foreach ($service_types as $index => $service): ?>
                     <tr>
                         <td class="text-center align-middle"><?= $index + 1 ?></td>
                         <td class="align-middle">
-                            <img src="<?= !empty($service['image']) && $service['image'] ? '/assets/uploads/service/' . $service['image'] : '/assets/images/no-image.jpg' ?>"
-                                alt="Service"
-                                class="img-thumbnail"
-                                style="width: 120px; height: auto; object-fit: cover;">
+                            <?= $service['name']; ?>
                         </td>
                         <td class="align-middle">
-                            <?= htmlspecialchars($service['name']) ?>
-                        </td>
-                        <td class="align-middle">
-                            <?= htmlspecialchars($service['service_type_name']) ?>
-                        </td>
-                        <td class="align-middle">
-                            <div class="d-flex flex-column">
-                                <span>ราคา: <?= htmlspecialchars($service['price']) ?> บาท</span>
-                                <span>เวลาในการบริการ: <?= htmlspecialchars($service['time']) ?> นาที</span>
-                                <span>รายละเอียด: <?= htmlspecialchars($service['description']) ?></span>
-                            </div>
+                            <?= $service['description']; ?>
                         </td>
                         <td class="align-middle">
                             <?php if ($service['is_active'] == 1): ?>
@@ -55,10 +40,10 @@
                         </td>
                         <td class="text-center align-middle"><?= $this->dateFormat($service['updated_at']); ?></td>
                         <td class="text-center align-middle">
-                            <a href="/service/edit/<?php echo $service['service_id']; ?>" class="btn btn-warning text-white">
+                            <a href="/service_type/edit/<?php echo $service['service_type_id']; ?>" class="btn btn-warning text-white">
                                 <i class="far fa-edit"></i> แก้ไข
                             </a>
-                            <form action="/service/delete/<?php echo $service['service_id']; ?>" method="POST" class="d-inline">
+                            <form action="/service_type/delete/<?php echo $service['service_type_id']; ?>" method="POST" class="d-inline">
                                 <button type="button" class="btn btn-danger delete-btn">
                                     <i class="far fa-trash-alt"></i> ลบ
                                 </button>

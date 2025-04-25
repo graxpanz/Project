@@ -24,6 +24,18 @@ $menu = [
         "icon" => "fas fa-users",
         "url" => "/customer"
     ],
+    [
+        "module" => "service_type",
+        "name" => "จัดการประเภทของบริการ",
+        "icon" => "fas fa-air-freshener",
+        "url" => "/service_type"
+    ],
+    [
+        "module" => "service",
+        "name" => "จัดการข้อมูลการบริการ",
+        "icon" => "fas fa-air-freshener",
+        "url" => "/service"
+    ],
     // [
     //     "module" => "employee",
     //     "name" => "จัดการข้อมูลพนักงาน",

@@ -7,7 +7,7 @@ class RoleController extends Controller
     public function __construct()
     {
         parent::__construct();
-        $this->roleModel = $this->model('role');
+        $this->roleModel = $this->model('Role');
         $this->permissions = [
             'dashboard' => 'หน้าหลัก/แดชบอร์ด',
             'user' => 'จัดการผู้ใช้',
@@ -16,6 +16,7 @@ class RoleController extends Controller
             'employee-schedule' => 'ตารางงานของพนักงาน',
             'customer' => 'จัดการข้อมูลลูกค้า',
             'stock' => 'จัดการข้อมูลสินค้าและผลิตภัณฑ์ภายในร้าน',
+            'service_type' => 'จัดการประเภทของบริการ',
             'service' => 'จัดการข้อมูลการบริการ',
             'estimate' => 'จัดการข้อมูลการประเมินใบหน้า',
             'promotion' => 'จัดการโปรโมชั่น',

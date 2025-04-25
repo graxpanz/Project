@@ -21,7 +21,7 @@
                         </div>
                         <div class="custom-file" style="width: 250px;">
                             <input type="file" class="custom-file-input" name="image" id="customFile" accept="image/*">
-                            <label class="custom-file-label text-truncate" for="customFile" data-browse="เลือกรูป"></label>
+                            <label class="custom-file-label text-truncate text-left" for="customFile" data-browse="เลือกรูป"></label>
                         </div>
                     </div>
                 </div>

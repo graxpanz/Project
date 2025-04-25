@@ -22,7 +22,7 @@ $title = 'จัดการข้อมูลลูกค้า | Mira ศู�
                     <th width="25%">ข้อมูลติดต่อ</th>
                     <th width="25%">ที่อยู่</th>
                     <th width="10%">สถานะ</th>
-                    <th width="15%">จัดการ</th>
+                    <th width="15%"></th>
                 </tr>
             </thead>
             <tbody>
