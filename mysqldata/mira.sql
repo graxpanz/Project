@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: database
--- Generation Time: Apr 25, 2025 at 10:41 AM
+-- Generation Time: Apr 25, 2025 at 11:48 PM
 -- Server version: 11.6.2-MariaDB-ubu2404
 -- PHP Version: 8.2.27
 
@@ -20,6 +20,31 @@ SET time_zone = "+00:00";
 --
 -- Database: `mira`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `booking`
+--
+
+CREATE TABLE `booking` (
+  `booking_id` int(11) NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `service_id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `promotion_id` int(11) DEFAULT NULL,
+  `appointment_datetime` datetime DEFAULT NULL,
+  `price` double(11,2) DEFAULT NULL,
+  `discount` double(11,2) DEFAULT NULL,
+  `deposit_price` double(11,2) DEFAULT NULL COMMENT '10%',
+  `total_price` double(11,2) DEFAULT NULL,
+  `note` text DEFAULT NULL,
+  `status` enum('pending','confirm','cancel','complete') NOT NULL DEFAULT 'pending',
+  `is_active` enum('0','1') NOT NULL DEFAULT '1',
+  `deleted_at` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -83,6 +108,36 @@ INSERT INTO `customer_session` (`session_id`, `customer_id`, `token`, `ip_addres
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `promotion`
+--
+
+CREATE TABLE `promotion` (
+  `promotion_id` int(11) NOT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `discount` double(11,2) NOT NULL DEFAULT 0.00,
+  `code` varchar(255) NOT NULL,
+  `start_datetime` datetime NOT NULL,
+  `end_datetime` datetime NOT NULL,
+  `is_active` enum('0','1') NOT NULL DEFAULT '1',
+  `deleted_at` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+--
+-- Dumping data for table `promotion`
+--
+
+INSERT INTO `promotion` (`promotion_id`, `image`, `name`, `description`, `discount`, `code`, `start_datetime`, `end_datetime`, `is_active`, `deleted_at`, `created_at`, `updated_at`) VALUES
+(1, NULL, 'ชื่อโปรโมชั่น', 'รายละเอียด', 20.00, 'ABC123456', '2025-04-25 00:00:00', '2029-12-31 23:59:00', '1', NULL, '2025-04-25 18:21:56', '2025-04-25 23:40:33'),
+(2, NULL, 'ชื่อโปรโมชั่น edit', 'รายละเอียด edit', 200.00, 'ABC123456Z', '2025-04-26 00:00:00', '2029-12-31 23:59:00', '0', '2025-04-25 21:32:23', '2025-04-25 21:31:16', '2025-04-25 21:32:23'),
+(3, NULL, 'ชื่อโปรโมชั่น edit editz', 'รายละเอียด edit editz', 400.00, 'ABC1234222', '2025-04-30 00:00:00', '2029-12-31 23:59:00', '1', NULL, '2025-04-25 21:31:55', '2025-04-25 21:32:13');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `service`
 --
 
@@ -105,7 +160,7 @@ CREATE TABLE `service` (
 --
 
 INSERT INTO `service` (`service_id`, `service_type_id`, `image`, `name`, `description`, `price`, `time`, `is_active`, `deleted_at`, `created_at`, `updated_at`) VALUES
-(1, 2, NULL, 'บริการ 1 แก้ไข', 'รายละเอียดบริการ 1 แก้ไข แก้ไข', 199.00, 59, '1', NULL, '2025-04-24 16:08:47', '2025-04-25 10:33:07'),
+(1, 2, '680b6bb8c8b26_1745578936.png', 'บริการ 1 แก้ไข', 'รายละเอียดบริการ 1 แก้ไข แก้ไข', 199.00, 59, '1', NULL, '2025-04-24 16:08:47', '2025-04-25 11:02:16'),
 (2, 1, NULL, 'ชื่อบริการ', 'รายละเอียด', 200.00, 60, '1', NULL, '2025-04-25 09:27:55', '2025-04-25 09:27:55'),
 (3, 2, NULL, 'ชื่อบริการ 2', 'รายละเอียด รายละเอียด รายละเอียด', 500.00, 30, '0', '2025-04-25 09:31:32', '2025-04-25 09:30:18', '2025-04-25 10:33:09');
 
@@ -196,6 +251,12 @@ INSERT INTO `user_role` (`user_role_id`, `name`, `permission`, `is_active`, `del
 --
 
 --
+-- Indexes for table `booking`
+--
+ALTER TABLE `booking`
+  ADD PRIMARY KEY (`booking_id`);
+
+--
 -- Indexes for table `customer`
 --
 ALTER TABLE `customer`
@@ -208,6 +269,12 @@ ALTER TABLE `customer_session`
   ADD PRIMARY KEY (`session_id`),
   ADD KEY `idx_token` (`token`),
   ADD KEY `idx_customer` (`customer_id`);
+
+--
+-- Indexes for table `promotion`
+--
+ALTER TABLE `promotion`
+  ADD PRIMARY KEY (`promotion_id`);
 
 --
 -- Indexes for table `service`
@@ -238,10 +305,22 @@ ALTER TABLE `user_role`
 --
 
 --
+-- AUTO_INCREMENT for table `booking`
+--
+ALTER TABLE `booking`
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
   MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `promotion`
+--
+ALTER TABLE `promotion`
+  MODIFY `promotion_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `service`
