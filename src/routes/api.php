@@ -12,3 +12,7 @@ Route::get('/api/service/{id}', 'ServiceController@api_service_by_id');
 
 Route::get('/api/promotion', 'PromotionController@api_promotion');
 Route::post('/api/promotion/redeem', 'PromotionController@api_redeem');
+
+Route::post('/api/booking/add', 'BookingController@api_booking_add');
+Route::get('/api/booking/customer', 'BookingController@api_booking_by_customer'); // can add ?status=pending also ['pending', 'confirm', 'complete', 'cancel']
+Route::post('/api/booking/cancel', 'BookingController@api_booking_cancel');

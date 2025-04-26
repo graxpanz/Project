@@ -12,10 +12,12 @@
     <link rel="stylesheet" href="/plugins/bootstrap-toggle/bootstrap-toggle.min.css">
     <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
     <link rel="stylesheet" href="/assets/css/adminlte.min.css">
+    <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
     <link rel="stylesheet" href="/assets/css/style.css">
     <!-- DataTables -->
     <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+
     <?php echo $additionalHead ?? ''; ?>
 
     <!-- Scripts -->
@@ -25,11 +27,13 @@
     <script src="/assets/js/adminlte.min.js"></script>
     <script src="/plugins/bootstrap-toggle/bootstrap-toggle.min.js"></script>
     <script src="/plugins/toastr/toastr.min.js"></script>
+    <script src="/plugins/select2/js/select2.full.min.js"></script>
     <!-- DataTables -->
     <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
     <script src="/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
     <script src="/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+
     <!-- OPTIONAL SCRIPTS -->
     <script src="/plugins/chart.js/Chart.min.js"></script>
 </head>

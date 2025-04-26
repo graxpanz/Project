@@ -15,7 +15,7 @@ $menu = [
     [
         "module" => "role",
         "name" => "จัดการสิทธ์ผู้ใช้",
-        "icon" => "fas fa-user-cog",
+        "icon" => "fas fa-user-shield",
         "url" => "/role"
     ],
     [
@@ -27,13 +27,13 @@ $menu = [
     [
         "module" => "service_type",
         "name" => "จัดการประเภทของบริการ",
-        "icon" => "fas fa-air-freshener",
+        "icon" => "fas fa-list",
         "url" => "/service_type"
     ],
     [
         "module" => "service",
         "name" => "จัดการข้อมูลการบริการ",
-        "icon" => "fas fa-air-freshener",
+        "icon" => "fas fa-concierge-bell",
         "url" => "/service"
     ],
     [
@@ -42,6 +42,12 @@ $menu = [
         "icon" => "fas fa-tag",
         "url" => "/promotion"
     ],
+    [
+        "module" => "booking",
+        "name" => "จัดการข้อมูลการจอง",
+        "icon" => "fas fa-calendar-check",
+        "url" => "/booking"
+    ]
     // [
     //     "module" => "employee",
     //     "name" => "จัดการข้อมูลพนักงาน",

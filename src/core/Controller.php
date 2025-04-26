@@ -56,6 +56,16 @@ class Controller {
         exit();
     }
 
+    public function getAuthToken() {
+        $headers = getallheaders();
+        if (isset($headers['Authorization'])) {
+            if (preg_match('/Bearer\s(\S+)/', $headers['Authorization'], $matches)) {
+                return $matches[1];
+            }
+        }
+        return null;
+    }
+
     public function dateFormat($date) {
         return date('d/m/Y H:i:s', strtotime($date));
     }

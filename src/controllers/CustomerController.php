@@ -8,7 +8,7 @@ class CustomerController extends Controller {
     }
 
     public function index() {
-        $customers = $this->customerModel->getAllCustomer();
+        $customers = $this->customerModel->getAllCustomers();
         $data = [
             'title' => 'จัดการข้อมูลลูกค้า | Mira ศูนย์ความงามครบวงจร',
             'customers' => $customers
@@ -395,15 +395,5 @@ class CustomerController extends Controller {
                 'error' => $e->getMessage()
             ]);
         }
-    }
-
-    private function getAuthToken() {
-        $headers = getallheaders();
-        if (isset($headers['Authorization'])) {
-            if (preg_match('/Bearer\s(\S+)/', $headers['Authorization'], $matches)) {
-                return $matches[1];
-            }
-        }
-        return null;
     }
 }

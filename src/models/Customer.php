@@ -12,7 +12,7 @@ class Customer
         $this->db = new Database();
     }
 
-    public function getAllCustomer()
+    public function getAllCustomers()
     {
         $sql = "SELECT * FROM $this->dbname WHERE deleted_at IS NULL";
         $stmt = $this->db->getConnection()->query($sql);

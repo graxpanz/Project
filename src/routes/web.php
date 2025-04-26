@@ -56,6 +56,13 @@ Route::get('/promotion/edit/{id}', 'PromotionController@edit');
 Route::post('/promotion/update', 'PromotionController@update');
 Route::post('/promotion/delete/{id}', 'PromotionController@delete');
 
+Route::get('/booking', 'BookingController@index');
+Route::get('/booking/add', 'BookingController@add');
+Route::post('/booking/insert', 'BookingController@insert');
+Route::get('/booking/edit/{id}', 'BookingController@edit');
+Route::post('/booking/update', 'BookingController@update');
+Route::post('/booking/delete/{id}', 'BookingController@delete');
+
 Route::get('/estimate', 'EstimateController@index');
 Route::get('/estimate/detail/{id}', 'EstimateController@detail');
 Route::post('/estimate/update', 'EstimateController@update');

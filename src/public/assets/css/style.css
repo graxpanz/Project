@@ -55,3 +55,7 @@ body, html {
 .badge {
     font-size: 100%;
 }
+
+.select2-container .select2-selection--single {
+    height: calc(2.25rem + 2px) !important;
+}
