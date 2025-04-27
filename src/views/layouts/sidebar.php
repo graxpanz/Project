@@ -47,6 +47,12 @@ $menu = [
         "name" => "จัดการข้อมูลการจอง",
         "icon" => "fas fa-calendar-check",
         "url" => "/booking"
+    ],
+    [
+        "module" => "feedback",
+        "name" => "จัดการข้อมูลความคิดเห็น",
+        "icon" => "fas fa-comment",
+        "url" => "/feedback"
     ]
     // [
     //     "module" => "employee",

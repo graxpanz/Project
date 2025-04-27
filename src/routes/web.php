@@ -63,14 +63,16 @@ Route::get('/booking/edit/{id}', 'BookingController@edit');
 Route::post('/booking/update', 'BookingController@update');
 Route::post('/booking/delete/{id}', 'BookingController@delete');
 
+Route::get('/feedback', 'FeedbackController@index');
+Route::get('/feedback/add', 'FeedbackController@add');
+Route::post('/feedback/insert', 'FeedbackController@insert');
+Route::get('/feedback/edit/{id}', 'FeedbackController@edit');
+Route::post('/feedback/update', 'FeedbackController@update');
+Route::post('/feedback/delete/{id}', 'FeedbackController@delete');
+
 Route::get('/estimate', 'EstimateController@index');
 Route::get('/estimate/detail/{id}', 'EstimateController@detail');
 Route::post('/estimate/update', 'EstimateController@update');
-
-Route::get('/comment', 'CommentController@index');
-Route::get('/comment/detail/{id}', 'CommentController@detail');
-Route::post('/comment/update', 'CommentController@update');
-Route::post('/comment/delete/{id}', 'CommentController@delete');
 
 Route::get('/finance', 'FinanceController@index');
 Route::get('/finance/add', 'FinanceController@add');

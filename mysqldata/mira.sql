@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: database
--- Generation Time: Apr 25, 2025 at 11:48 PM
+-- Generation Time: Apr 27, 2025 at 12:19 AM
 -- Server version: 11.6.2-MariaDB-ubu2404
 -- PHP Version: 8.2.27
 
@@ -45,6 +45,15 @@ CREATE TABLE `booking` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+--
+-- Dumping data for table `booking`
+--
+
+INSERT INTO `booking` (`booking_id`, `customer_id`, `service_id`, `user_id`, `promotion_id`, `appointment_datetime`, `price`, `discount`, `deposit_price`, `total_price`, `note`, `status`, `is_active`, `deleted_at`, `created_at`, `updated_at`) VALUES
+(2, 3, 1, 2, NULL, '2025-05-01 18:25:00', 199.00, 0.00, 19.90, 199.00, 'ทดสอบ', 'cancel', '1', NULL, '2025-04-26 11:26:00', '2025-04-26 14:23:32'),
+(3, 3, 1, 2, NULL, '2025-05-10 14:30:00', 199.00, 0.00, 19.90, 199.00, 'ลูกค้าแพ้น้ำหอม กรุณาใช้ผลิตภัณฑ์ที่ไม่มีกลิ่น', 'pending', '1', NULL, '2025-04-26 12:10:31', '2025-04-26 12:10:31'),
+(4, 3, 1, 2, NULL, '2025-05-11 14:30:00', 199.00, 0.00, 19.90, 199.00, 'ลูกค้าแพ้น้ำหอม กรุณาใช้ผลิตภัณฑ์ที่ไม่มีกลิ่น', 'confirm', '1', NULL, '2025-04-26 12:14:03', '2025-04-26 12:14:53');
 
 -- --------------------------------------------------------
 
@@ -99,11 +108,42 @@ CREATE TABLE `customer_session` (
 --
 
 INSERT INTO `customer_session` (`session_id`, `customer_id`, `token`, `ip_address`, `user_agent`, `last_activity`, `created_at`, `expired_at`) VALUES
+('075bb6a2591708f8ddeb3b680f5bf1c3', 3, '85e7e9a5d42c35d69ae040e8db5b609fa10c8e643979e7ae62175cc5eac9787b', '172.18.0.1', 'PostmanRuntime/7.43.3', '2025-04-26 12:07:52', '2025-04-26 12:07:52', '2025-05-26 12:07:52'),
 ('125c39c2063baf859abde943d4e69b20', 5, 'eaaeb2280babb14aeae7ea12c682fa485700d61023dc5dfdf62a4a1fb19bc6d0', '172.18.0.1', 'PostmanRuntime/7.43.0', '2025-03-31 15:13:18', '2025-03-31 15:13:18', '2025-04-30 15:13:18'),
 ('14fa4568efe76158dc1a6b0f961b7861', 5, 'd44d71c4ebdcb7b42fd76f47c87028fc8fe332ffc382c294bd57426428e9b8fb', '172.18.0.1', 'PostmanRuntime/7.43.0', '2025-03-31 15:09:21', '2025-03-31 15:09:21', '2025-04-30 15:09:21'),
 ('26d2d2925fb547c09407f369adee47f6', 5, '97b798261607680bc999470b2d9d23a406e885534cc024f069a997cfd267f12e', '172.18.0.1', 'PostmanRuntime/7.43.0', '2025-03-31 15:06:43', '2025-03-31 15:06:43', '2025-04-30 15:06:43'),
 ('a3487e65bcb29e2a885bcde70c8b8c1f', 3, 'b7a20d1bd36976e99e4574221fadb5ed024028096f918ca40bf1d0af3bcaf87e', '172.18.0.1', 'PostmanRuntime/7.43.0', '2025-03-31 15:05:02', '2025-03-31 15:05:02', '2025-04-30 15:05:02'),
 ('d68f569b293ad683ffca1010e3b0b976', 3, 'fb5c9be2dfc177483d614902a9ffd4a6ea882a9f1bb9cd4c95eee84e96bdd96d', '172.18.0.1', 'PostmanRuntime/7.43.0', '2025-02-24 12:11:21', '2025-02-24 12:11:21', '2025-03-26 12:11:21');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `feedback`
+--
+
+CREATE TABLE `feedback` (
+  `feedback_id` int(11) NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `service_id` int(11) DEFAULT NULL,
+  `rating` enum('1','2','3','4','5') NOT NULL DEFAULT '1',
+  `comment` text DEFAULT NULL,
+  `is_active` enum('0','1') NOT NULL DEFAULT '1',
+  `deleted_at` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+--
+-- Dumping data for table `feedback`
+--
+
+INSERT INTO `feedback` (`feedback_id`, `customer_id`, `service_id`, `rating`, `comment`, `is_active`, `deleted_at`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, '3', 'บริการดีมาก พนักงานน่ารักเป็นกันเอง ใส่ใจในทุกรายละเอียด ผลลัพธ์ออกมาพอใจมากค่ะ จะกลับมาใช้บริการอีกแน่นอน', '1', NULL, '2025-04-26 23:59:24', '2025-04-27 00:11:55'),
+(2, 3, 2, '5', 'ประทับใจในการบริการมากๆ คุณหมอมีความเชี่ยวชาญ อธิบายขั้นตอนการรักษาได้ชัดเจน ทำให้รู้สึกสบายใจตลอดการรักษา', '1', NULL, '2025-04-27 00:12:16', '2025-04-27 00:12:16'),
+(3, 5, 1, '1', 'แย่มาก! พนักงานพูดจาไม่ดี ไม่มีการอธิบายขั้นตอนการทำทรีทเมนต์ ทำเสร็จแล้วผิวแพ้ แต่ไม่มีการติดตามผล ไม่แนะนำเลย', '1', NULL, '2025-04-27 00:12:46', '2025-04-27 00:12:46'),
+(4, 3, NULL, '3', 'บริการพอใช้ได้ ผลลัพธ์ไม่เห็นผลชัดเจนเท่าที่คาดหวัง อาจต้องทำหลายครั้ง พนักงานบริการดี แต่ต้องรอนาน', '1', NULL, '2025-04-27 00:16:36', '2025-04-27 00:16:36'),
+(5, 3, NULL, '3', 'บริการพอใช้ได้ ผลลัพธ์ไม่เห็นผลชัดเจนเท่าที่คาดหวัง อาจต้องทำหลายครั้ง พนักงานบริการดี แต่ต้องรอนาน', '0', '2025-04-27 00:17:29', '2025-04-27 00:17:22', '2025-04-27 00:17:29'),
+(6, 3, 1, '3', 'บริการพอใช้ได้ ผลลัพธ์ไม่เห็นผลชัดเจนเท่าที่คาดหวัง อาจต้องทำหลายครั้ง พนักงานบริการดี แต่ต้องรอนาน', '0', '2025-04-27 00:17:39', '2025-04-27 00:17:35', '2025-04-27 00:17:39');
 
 -- --------------------------------------------------------
 
@@ -219,7 +259,7 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`user_id`, `user_role_id`, `username`, `password`, `image`, `firstname`, `lastname`, `email`, `phone`, `birthdate`, `address`, `last_login`, `is_active`, `deleted_at`, `created_at`, `updated_at`) VALUES
-(1, 1, 'admin', '$2y$10$QaD4oTnP8NQUHqExpB6iRuW4paCeFEsW.x3TjdMrzYEOV43smhvRu', NULL, 'Administrator', '', 'admin@mail.com', '0987654321', '1999-01-01', '-', '2025-04-25 08:42:52', '1', NULL, '2024-08-16 20:39:51', '2025-04-25 08:42:52'),
+(1, 1, 'admin', '$2y$10$QaD4oTnP8NQUHqExpB6iRuW4paCeFEsW.x3TjdMrzYEOV43smhvRu', NULL, 'Administrator', '', 'admin@mail.com', '0987654321', '1999-01-01', '-', '2025-04-26 23:56:17', '1', NULL, '2024-08-16 20:39:51', '2025-04-26 23:56:17'),
 (2, 2, 'employee', '$2y$10$QaD4oTnP8NQUHqExpB6iRuW4paCeFEsW.x3TjdMrzYEOV43smhvRu', NULL, 'John', 'Doe', 'employee@mail.com', '0123456789', '1993-12-11', '-', NULL, '1', NULL, '2024-08-16 20:39:51', '2024-11-03 03:04:05');
 
 -- --------------------------------------------------------
@@ -243,8 +283,8 @@ CREATE TABLE `user_role` (
 --
 
 INSERT INTO `user_role` (`user_role_id`, `name`, `permission`, `is_active`, `deleted_at`, `created_at`, `updated_at`) VALUES
-(1, 'ผู้ดูแลระบบ', 'dashboard, user, role, employee, employee-schedule, customer, stock, service_type, service, estimate, promotion, comment, finance', '1', NULL, '2024-11-03 01:42:56', '2025-04-24 15:05:46'),
-(2, 'พนักงาน', 'dashboard, role, estimate, promotion, comment', '1', NULL, '2024-11-03 02:06:49', '2025-02-09 11:17:29');
+(1, 'ผู้ดูแลระบบ', 'dashboard, user, role, customer, service_type, service, promotion, booking, feedback', '1', NULL, '2024-11-03 01:42:56', '2025-04-26 23:56:11'),
+(2, 'พนักงาน', 'dashboard, customer, promotion, booking', '1', NULL, '2024-11-03 02:06:49', '2025-04-26 10:34:13');
 
 --
 -- Indexes for dumped tables
@@ -269,6 +309,12 @@ ALTER TABLE `customer_session`
   ADD PRIMARY KEY (`session_id`),
   ADD KEY `idx_token` (`token`),
   ADD KEY `idx_customer` (`customer_id`);
+
+--
+-- Indexes for table `feedback`
+--
+ALTER TABLE `feedback`
+  ADD PRIMARY KEY (`feedback_id`);
 
 --
 -- Indexes for table `promotion`
@@ -308,13 +354,19 @@ ALTER TABLE `user_role`
 -- AUTO_INCREMENT for table `booking`
 --
 ALTER TABLE `booking`
-  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `booking_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
   MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `feedback`
+--
+ALTER TABLE `feedback`
+  MODIFY `feedback_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `promotion`
