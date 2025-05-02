@@ -80,7 +80,7 @@ class UserController extends Controller {
         try {
             $employees = $this->userModel->getAllEmployees();
             foreach ($employees as $key => $employee) {
-                $employee[$key]['image'] = $employee['image'] ? "assets/uploads/user/" . $employee['image'] : null;
+                $employees[$key]['image'] = $employee['image'] ? "assets/uploads/user/" . $employee['image'] : null;
             }
             $this->json([
                 'status' => true,
