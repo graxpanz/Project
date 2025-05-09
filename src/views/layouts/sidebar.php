@@ -53,7 +53,13 @@ $menu = [
         "name" => "จัดการข้อมูลความคิดเห็น",
         "icon" => "fas fa-comment",
         "url" => "/feedback"
-    ]
+    ],
+    [
+        "module" => "estimate",
+        "name" => "จัดการข้อมูลการประเมินใบหน้า",
+        "icon" => "fas fa-clipboard-list",
+        "url" => "/estimate"
+    ],
     // [
     //     "module" => "employee",
     //     "name" => "จัดการข้อมูลพนักงาน",
@@ -77,12 +83,6 @@ $menu = [
     //     "name" => "จัดการข้อมูลการบริการ",
     //     "icon" => "fas fa-air-freshener",
     //     "url" => "/service"
-    // ],
-    // [
-    //     "module" => "estimate",
-    //     "name" => "จัดการข้อมูลการประเมินใบหน้า",
-    //     "icon" => "fas fa-user-circle",
-    //     "url" => "/estimate"
     // ],
     // [
     //     "module" => "comment",

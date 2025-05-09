@@ -17,7 +17,8 @@ class RoleController extends Controller
             'service' => 'จัดการข้อมูลการบริการ',
             'promotion' => 'จัดการโปรโมชั่น',
             'booking' => 'จัดการข้อมูลการจอง',
-            'feedback' => 'จัดการข้อมูลความคิดเห็น'
+            'feedback' => 'จัดการข้อมูลความคิดเห็น',
+            'estimate' => 'จัดการข้อมูลการประเมิน'
         ];
     }
 

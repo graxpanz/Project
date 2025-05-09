@@ -4,7 +4,7 @@ $debug = true;
 // ตั้งค่า permission CORS สำหรับ API
 header('Access-Control-Allow-Origin: *'); 
 header('Access-Control-Allow-Methods: GET, POST'); 
-header("Access-Control-Allow-Headers: X-Requested-With");
+header('Access-Control-Allow-Headers: *');
 
 // ตั้งค่า error reporting และ timezone
 error_reporting(E_ALL);

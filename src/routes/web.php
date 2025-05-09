@@ -71,8 +71,13 @@ Route::post('/feedback/update', 'FeedbackController@update');
 Route::post('/feedback/delete/{id}', 'FeedbackController@delete');
 
 Route::get('/estimate', 'EstimateController@index');
-Route::get('/estimate/detail/{id}', 'EstimateController@detail');
+Route::get('/estimate/add', 'EstimateController@add');
+Route::post('/estimate/insert', 'EstimateController@insert');
+Route::get('/estimate/edit/{id}', 'EstimateController@edit');
 Route::post('/estimate/update', 'EstimateController@update');
+Route::post('/estimate/delete/{id}', 'EstimateController@delete');
+Route::get('/estimate/respond/{id}', 'EstimateController@respond');
+Route::post('/estimate/update_response', 'EstimateController@update_response');
 
 Route::get('/finance', 'FinanceController@index');
 Route::get('/finance/add', 'FinanceController@add');

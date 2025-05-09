@@ -19,3 +19,8 @@ Route::post('/api/booking/cancel', 'BookingController@api_booking_cancel');
 
 Route::get('/api/feedback', 'FeedbackController@api_feedback');
 Route::post('/api/feedback/add', 'FeedbackController@api_feedback_add');
+
+Route::get('/api/estimate/customer', 'EstimateController@api_estimate_by_customer');
+Route::post('/api/estimate/create', 'EstimateController@api_create_estimate');
+Route::post('/api/estimate/update', 'EstimateController@api_update_estimate');
+Route::post('/api/estimate/delete', 'EstimateController@api_delete_estimate');
