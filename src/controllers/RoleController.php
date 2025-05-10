@@ -10,6 +10,7 @@ class RoleController extends Controller
         $this->roleModel = $this->model('Role');
         $this->permissions = [
             'dashboard' => 'หน้าหลัก/แดชบอร์ด',
+            'work-calendar' => 'ปฏิทินการปฏิบัติงาน',
             'user' => 'จัดการผู้ใช้',
             'role' => 'จัดการสิทธ์ผู้ใช้',
             'customer' => 'จัดการข้อมูลลูกค้า',

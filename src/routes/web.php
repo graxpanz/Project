@@ -80,6 +80,8 @@ Route::post('/estimate/delete/{id}', 'EstimateController@delete');
 Route::get('/estimate/respond/{id}', 'EstimateController@respond');
 Route::post('/estimate/update_response', 'EstimateController@update_response');
 
+Route::get('/work-calendar', 'WorkCalendarController@index');
+
 Route::get('/finance', 'FinanceController@index');
 Route::get('/finance/add', 'FinanceController@add');
 Route::post('/finance/insert', 'FinanceController@insert');

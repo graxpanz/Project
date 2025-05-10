@@ -19,6 +19,7 @@ class BookingController extends Controller {
 
     public function index() {
         $bookings = $this->bookingModel->getAllBookings();
+        return $this->json($bookings);
         $data = [
             'title' => 'จัดการข้อมูลการจอง | Mira ศูนย์ความงามครบวงจร',
             'bookings' => $bookings,

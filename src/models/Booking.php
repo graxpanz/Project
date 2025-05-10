@@ -10,7 +10,7 @@ class Booking
         $this->db = new Database();
     }
 
-    public function getAllBookings()
+    public function getAllBookings($status = null)
     {
         $sql = "SELECT 
                     b.*,
@@ -45,10 +45,20 @@ class Booking
                 LEFT JOIN user u ON b.user_id = u.user_id
                 LEFT JOIN user_role ur ON u.user_role_id = ur.user_role_id
                 LEFT JOIN promotion p ON b.promotion_id = p.promotion_id
-                WHERE b.deleted_at IS NULL
-                ORDER BY b.appointment_datetime ASC";
-        
-        $stmt = $this->db->getConnection()->query($sql);
+                WHERE b.deleted_at IS NULL";
+
+        if ($status) {
+            $sql .= " AND b.status = :status";
+        }
+
+        $sql .= " ORDER BY b.appointment_datetime ASC";
+
+        $stmt = $this->db->getConnection()->prepare($sql);
+        if ($status) {
+            $stmt->bindParam(':status', $status, PDO::PARAM_STR);
+        }
+
+        $stmt->execute();
         $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return $this->formattedBookings($bookings);
@@ -99,23 +109,23 @@ class Booking
                     LEFT JOIN user_role ur ON u.user_role_id = ur.user_role_id
                     LEFT JOIN promotion p ON b.promotion_id = p.promotion_id
                     WHERE b.customer_id = :customer_id AND b.deleted_at IS NULL";
-                    
+
             if ($status) {
                 $sql .= " AND b.status = :status";
             }
-            
+
             $sql .= " ORDER BY b.created_at ASC";
-            
+
             $stmt = $this->db->getConnection()->prepare($sql);
             $stmt->bindParam(':customer_id', $customerId, PDO::PARAM_INT);
-            
+
             if ($status) {
                 $stmt->bindParam(':status', $status, PDO::PARAM_STR);
             }
-            
+
             $stmt->execute();
             $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
+
             return $this->formattedBookings($bookings);
         } catch (PDOException $e) {
             error_log("Error getting bookings by customer: " . $e->getMessage());
@@ -128,7 +138,7 @@ class Booking
         try {
             // Combine appointment date and time
             $appointmentDatetime = $data['appointment_date'] . ' ' . $data['appointment_time'] . ':00';
-            
+
             $sql = "INSERT INTO $this->dbname (
                 customer_id, service_id, user_id, promotion_id, appointment_datetime,
                 price, discount, deposit_price, total_price, note, status, is_active,
@@ -140,11 +150,11 @@ class Booking
             )";
 
             $stmt = $this->db->getConnection()->prepare($sql);
-            
+
             // Handle null for optional fields
             $userId = !empty($data['user_id']) ? $data['user_id'] : null;
             $promotionId = !empty($data['promotion_id']) ? $data['promotion_id'] : null;
-            
+
             $params = [
                 ':customer_id' => $data['customer_id'],
                 ':service_id' => $data['service_id'],
@@ -160,12 +170,12 @@ class Booking
             ];
 
             $result = $stmt->execute($params);
-            
+
             if ($result) {
                 // Return the last inserted ID
                 return $this->db->getConnection()->lastInsertId();
             }
-            
+
             return false;
         } catch (PDOException $e) {
             // Log error
@@ -184,7 +194,7 @@ class Booking
         try {
             // Combine appointment date and time
             $appointmentDatetime = $data['appointment_date'] . ' ' . $data['appointment_time'] . ':00';
-            
+
             $sql = "UPDATE $this->dbname SET 
                 customer_id = :customer_id,
                 service_id = :service_id,
@@ -204,7 +214,7 @@ class Booking
             // Handle null for optional fields
             $userId = !empty($data['user_id']) ? $data['user_id'] : null;
             $promotionId = !empty($data['promotion_id']) ? $data['promotion_id'] : null;
-            
+
             $params = [
                 ':customer_id' => $data['customer_id'],
                 ':service_id' => $data['service_id'],
@@ -256,7 +266,7 @@ class Booking
             $stmt = $this->db->getConnection()->prepare($sql);
             $stmt->bindParam(':status', $status, PDO::PARAM_STR);
             $stmt->bindParam(':booking_id', $booking_id, PDO::PARAM_INT);
-            
+
             return $stmt->execute();
         } catch (PDOException $e) {
             error_log("Error updating booking status: " . $e->getMessage());
@@ -264,7 +274,8 @@ class Booking
         }
     }
 
-    private function formattedBookings($bookings) {
+    private function formattedBookings($bookings)
+    {
         $formattedBookings = [];
         foreach ($bookings as $booking) {
             $formattedBookings[] = [
@@ -321,7 +332,7 @@ class Booking
                 ] : null
             ];
         }
-        
+
         return $formattedBookings;
     }
 }

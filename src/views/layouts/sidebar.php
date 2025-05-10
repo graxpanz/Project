@@ -7,6 +7,12 @@ $menu = [
     //     "url" => "/dashboard"
     // ],
     [
+        "module" => "work-calendar",
+        "name" => "ปฏิทินการปฏิบัติงาน",
+        "icon" => "fas fa-calendar",
+        "url" => "/work-calendar"
+    ],
+    [
         "module" => "user",
         "name" => "จัดการผู้ใช้",
         "icon" => "fas fa-user-cog",
