@@ -88,6 +88,7 @@ Route::post('/finance/insert', 'FinanceController@insert');
 Route::get('/finance/edit/{id}', 'FinanceController@edit');
 Route::post('/finance/update', 'FinanceController@update');
 Route::post('/finance/delete/{id}', 'FinanceController@delete');
+Route::get('/finance/report', 'FinanceController@report');
 
 Route::get('/stock', 'StockController@index');
 Route::get('/stock/add', 'StockController@add');

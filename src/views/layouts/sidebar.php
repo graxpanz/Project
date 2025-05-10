@@ -62,9 +62,15 @@ $menu = [
     ],
     [
         "module" => "estimate",
-        "name" => "จัดการข้อมูลการประเมินใบหน้า",
+        "name" => "จัดการข้อมูลการประเมิน",
         "icon" => "fas fa-clipboard-list",
         "url" => "/estimate"
+    ],
+    [
+        "module" => "finance",
+        "name" => "จัดการรายรับ-รายจ่าย",
+        "icon" => "fas fa-money-bill-wave",
+        "url" => "/finance"
     ],
     // [
     //     "module" => "employee",

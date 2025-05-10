@@ -19,7 +19,8 @@ class RoleController extends Controller
             'promotion' => 'จัดการโปรโมชั่น',
             'booking' => 'จัดการข้อมูลการจอง',
             'feedback' => 'จัดการข้อมูลความคิดเห็น',
-            'estimate' => 'จัดการข้อมูลการประเมิน'
+            'estimate' => 'จัดการข้อมูลการประเมิน',
+            'finance' => 'จัดการรายรับ-รายจ่าย'
         ];
     }
 
