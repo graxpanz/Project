@@ -153,4 +153,19 @@ class Service
             throw $e;
         }
     }
+
+    // นับจำนวนบริการที่มีสถานะเปิดใช้งาน
+    public function countActiveServices()
+    {
+        try {
+            $sql = "SELECT COUNT(*) as total FROM service 
+                WHERE is_active = '1' AND deleted_at IS NULL";
+            $stmt = $this->db->getConnection()->query($sql);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result ? $result['total'] : 0;
+        } catch (PDOException $e) {
+            error_log("Error counting services: " . $e->getMessage());
+            return 0;
+        }
+    }
 }

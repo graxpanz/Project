@@ -160,4 +160,46 @@ class Customer
         $stmt = $this->db->getConnection()->prepare($sql);
         return $stmt->execute([$token]);
     }
+
+    // นับจำนวนลูกค้าที่มีสถานะเปิดใช้งาน
+    public function countActiveCustomers()
+    {
+        try {
+            $sql = "SELECT COUNT(*) as total FROM customer 
+                WHERE is_active = '1' AND deleted_at IS NULL";
+            $stmt = $this->db->getConnection()->query($sql);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result ? $result['total'] : 0;
+        } catch (PDOException $e) {
+            error_log("Error counting customers: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    // สถิติลูกค้าใหม่รายเดือน
+    public function getNewCustomersMonthly($year)
+    {
+        try {
+            $sql = "SELECT MONTH(created_at) as month, COUNT(*) as count
+                FROM customer
+                WHERE YEAR(created_at) = ?
+                AND deleted_at IS NULL
+                GROUP BY MONTH(created_at)
+                ORDER BY MONTH(created_at)";
+            $stmt = $this->db->getConnection()->prepare($sql);
+            $stmt->execute([$year]);
+
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $monthly_data = array_fill(1, 12, 0); // สร้างอาร์เรย์สำหรับ 12 เดือน
+
+            foreach ($result as $row) {
+                $monthly_data[$row['month']] = $row['count'];
+            }
+
+            return $monthly_data;
+        } catch (PDOException $e) {
+            error_log("Error getting monthly customer stats: " . $e->getMessage());
+            return array_fill(1, 12, 0);
+        }
+    }
 }

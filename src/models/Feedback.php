@@ -161,4 +161,58 @@ class Feedback
         $stmt = $this->db->getConnection()->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    // สถิติคะแนนความพึงพอใจ
+    public function getRatingStats()
+    {
+        try {
+            $sql = "SELECT rating, COUNT(*) as count
+                FROM feedback
+                WHERE deleted_at IS NULL
+                GROUP BY rating
+                ORDER BY rating";
+            $stmt = $this->db->getConnection()->query($sql);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $stats = ['1' => 0, '2' => 0, '3' => 0, '4' => 0, '5' => 0, 'average' => 0, 'total' => 0];
+            $total_ratings = 0;
+            $rating_sum = 0;
+
+            foreach ($result as $row) {
+                $stats[$row['rating']] = $row['count'];
+                $total_ratings += $row['count'];
+                $rating_sum += $row['rating'] * $row['count'];
+            }
+
+            $stats['total'] = $total_ratings;
+            $stats['average'] = $total_ratings > 0 ? round($rating_sum / $total_ratings, 1) : 0;
+
+            return $stats;
+        } catch (PDOException $e) {
+            error_log("Error getting feedback stats: " . $e->getMessage());
+            return ['1' => 0, '2' => 0, '3' => 0, '4' => 0, '5' => 0, 'average' => 0, 'total' => 0];
+        }
+    }
+
+    // ความคิดเห็นล่าสุด
+    public function getRecentFeedback($limit = 5)
+    {
+        try {
+            $sql = "SELECT f.*, 
+                c.firstname as customer_firstname, c.lastname as customer_lastname,
+                s.name as service_name
+                FROM feedback f
+                LEFT JOIN customer c ON f.customer_id = c.customer_id
+                LEFT JOIN service s ON f.service_id = s.service_id
+                WHERE f.deleted_at IS NULL
+                ORDER BY f.created_at DESC
+                LIMIT ?";
+            $stmt = $this->db->getConnection()->prepare($sql);
+            $stmt->execute([$limit]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error getting recent feedback: " . $e->getMessage());
+            return [];
+        }
+    }
 }

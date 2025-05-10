@@ -2,7 +2,8 @@
 class AuthController extends Controller {
     public function login() {
         if (isset($_SESSION['AD_ID'])) {
-            redirect('/user'); 
+            $permisson_arr = explode(',', $_SESSION['AD_PERMISSION']);
+            redirect('/' . $permisson_arr[0]);
         }
         
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -21,7 +22,8 @@ class AuthController extends Controller {
                 $_SESSION['AD_LOGIN'] = date('Y-m-d H:i:s');
                 $_SESSION['AD_PERMISSION'] = $user['permission'];
                 $userModel->updateLastLogin($user['user_id']);
-                redirect('/user');
+                $permisson_arr = explode(',', $_SESSION['AD_PERMISSION']);
+                redirect('/' . $permisson_arr[0]);
             } else {
                 $data['error'] = 'รหัสผ่านไม่ถูกต้องหรือชื่อผู้ใช้ไม่ถูกต้อง';
                 $this->view('auth/login', $data, false);

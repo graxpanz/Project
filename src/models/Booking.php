@@ -335,4 +335,172 @@ class Booking
 
         return $formattedBookings;
     }
+
+    // นับจำนวนการนัดหมายตามช่วงเวลา
+    public function countBookingsByDateRange($start_date, $end_date)
+    {
+        try {
+            $sql = "SELECT COUNT(*) as total FROM booking 
+                WHERE DATE(appointment_datetime) BETWEEN ? AND ?
+                AND deleted_at IS NULL";
+            $stmt = $this->db->getConnection()->prepare($sql);
+            $stmt->execute([$start_date, $end_date]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result ? $result['total'] : 0;
+        } catch (PDOException $e) {
+            error_log("Error counting bookings: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    // ดึงข้อมูลการนัดหมายตามวันที่
+    public function getBookingsByDate($date)
+    {
+        try {
+            $sql = "SELECT b.*, 
+                    c.firstname as customer_firstname, c.lastname as customer_lastname, c.phone as customer_phone,
+                    s.name as service_name, s.time as service_time,
+                    u.firstname as user_firstname, u.lastname as user_lastname
+                    FROM booking b
+                    LEFT JOIN customer c ON b.customer_id = c.customer_id
+                    LEFT JOIN service s ON b.service_id = s.service_id
+                    LEFT JOIN user u ON b.user_id = u.user_id
+                    WHERE DATE(b.appointment_datetime) = ?
+                    AND b.deleted_at IS NULL
+                    ORDER BY b.appointment_datetime ASC";
+            $stmt = $this->db->getConnection()->prepare($sql);
+            $stmt->execute([$date]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error getting bookings by date: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    // ดึงข้อมูลการนัดหมายล่าสุด
+    public function getRecentBookings($limit = 5)
+    {
+        try {
+            $sql = "SELECT b.*, 
+                    c.firstname as customer_firstname, c.lastname as customer_lastname,
+                    s.name as service_name,
+                    u.firstname as user_firstname, u.lastname as user_lastname
+                    FROM booking b
+                    LEFT JOIN customer c ON b.customer_id = c.customer_id
+                    LEFT JOIN service s ON b.service_id = s.service_id
+                    LEFT JOIN user u ON b.user_id = u.user_id
+                    WHERE b.deleted_at IS NULL
+                    ORDER BY b.created_at DESC
+                    LIMIT ?";
+            $stmt = $this->db->getConnection()->prepare($sql);
+            $stmt->execute([$limit]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error getting recent bookings: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    // สถิติการนัดหมายตามสถานะ
+    public function getBookingStatusStatsByDateRange($start_date, $end_date)
+    {
+        try {
+            $sql = "SELECT status, COUNT(*) as count
+                    FROM booking
+                    WHERE DATE(appointment_datetime) BETWEEN ? AND ?
+                    AND deleted_at IS NULL
+                    GROUP BY status";
+            $stmt = $this->db->getConnection()->prepare($sql);
+            $stmt->execute([$start_date, $end_date]);
+
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stats = [
+                'pending' => 0,
+                'confirm' => 0,
+                'cancel' => 0,
+                'complete' => 0
+            ];
+
+            foreach ($result as $row) {
+                $stats[$row['status']] = $row['count'];
+            }
+
+            return $stats;
+        } catch (PDOException $e) {
+            error_log("Error getting booking status stats: " . $e->getMessage());
+            return [
+                'pending' => 0,
+                'confirm' => 0,
+                'cancel' => 0,
+                'complete' => 0
+            ];
+        }
+    }
+
+    // บริการยอดนิยม
+    public function getMostPopularServices($start_date, $end_date, $limit = 5)
+    {
+        try {
+            $sql = "SELECT s.service_id, s.name, COUNT(b.booking_id) as booking_count
+                    FROM booking b
+                    JOIN service s ON b.service_id = s.service_id
+                    WHERE DATE(b.appointment_datetime) BETWEEN ? AND ?
+                    AND b.deleted_at IS NULL
+                    AND b.status IN ('confirm', 'complete')
+                    GROUP BY s.service_id, s.name
+                    ORDER BY booking_count DESC
+                    LIMIT ?";
+            $stmt = $this->db->getConnection()->prepare($sql);
+            $stmt->execute([$start_date, $end_date, $limit]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error getting popular services: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    // รายได้ตามประเภทบริการ
+    public function getRevenueByServiceType($start_date, $end_date)
+    {
+        try {
+            $sql = "SELECT st.service_type_id, st.name, SUM(b.total_price) as total_revenue, COUNT(b.booking_id) as booking_count
+                    FROM booking b
+                    JOIN service s ON b.service_id = s.service_id
+                    JOIN service_type st ON s.service_type_id = st.service_type_id
+                    WHERE DATE(b.appointment_datetime) BETWEEN ? AND ?
+                    AND b.deleted_at IS NULL
+                    AND b.status IN ('confirm', 'complete')
+                    GROUP BY st.service_type_id, st.name
+                    ORDER BY total_revenue DESC";
+            $stmt = $this->db->getConnection()->prepare($sql);
+            $stmt->execute([$start_date, $end_date]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error getting revenue by service type: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    // พนักงานที่มีการนัดหมายมากที่สุด
+    public function getTopEmployees($start_date, $end_date, $limit = 5)
+    {
+        try {
+            $sql = "SELECT u.user_id, u.firstname, u.lastname, COUNT(b.booking_id) as booking_count, 
+                    SUM(b.total_price) as total_revenue
+                    FROM booking b
+                    JOIN user u ON b.user_id = u.user_id
+                    WHERE DATE(b.appointment_datetime) BETWEEN ? AND ?
+                    AND b.deleted_at IS NULL
+                    AND b.status IN ('confirm', 'complete')
+                    GROUP BY u.user_id, u.firstname, u.lastname
+                    ORDER BY booking_count DESC
+                    LIMIT ?";
+            $stmt = $this->db->getConnection()->prepare($sql);
+            $stmt->execute([$start_date, $end_date, $limit]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error getting top employees: " . $e->getMessage());
+            return [];
+        }
+    }
 }

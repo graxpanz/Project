@@ -1,11 +1,11 @@
 <?php
 $menu = [
-    // [
-    //     "module" => "dashboard",
-    //     "name" => "หน้าหลัก",
-    //     "icon" => "fas fa-address-book",
-    //     "url" => "/dashboard"
-    // ],
+    [
+        "module" => "dashboard",
+        "name" => "หน้าหลัก/แดชบอร์ด",
+        "icon" => "fas fa-tachometer-alt",
+        "url" => "/dashboard"
+    ],
     [
         "module" => "work-calendar",
         "name" => "ปฏิทินการปฏิบัติงาน",

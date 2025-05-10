@@ -3,9 +3,9 @@
 Route::get('/login', 'AuthController@login');
 Route::post('/login', 'AuthController@login');
 Route::get('/logout', 'AuthController@logout');
+
 Route::get('/', 'DashboardController@index');
 Route::get('/dashboard', 'DashboardController@index');
-Route::get('/dashboard/detail-queue/{id}', 'DashboardController@detailQueue');
 
 Route::get('/user', 'UserController@index');
 Route::get('/user/add', 'UserController@add');
