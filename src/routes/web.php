@@ -90,9 +90,19 @@ Route::post('/finance/update', 'FinanceController@update');
 Route::post('/finance/delete/{id}', 'FinanceController@delete');
 Route::get('/finance/report', 'FinanceController@report');
 
+Route::get('/supply', 'SupplyController@index');
+Route::get('/supply/add', 'SupplyController@add');
+Route::post('/supply/insert', 'SupplyController@insert');
+Route::get('/supply/edit/{id}', 'SupplyController@edit');
+Route::post('/supply/update', 'SupplyController@update');
+Route::post('/supply/delete/{id}', 'SupplyController@delete');
+Route::get('/supply/low-stock', 'SupplyController@lowStock');
+
 Route::get('/stock', 'StockController@index');
-Route::get('/stock/add', 'StockController@add');
+Route::get('/stock/stock-in', 'StockController@stockIn');
+Route::get('/stock/stock-out', 'StockController@stockOut');
 Route::post('/stock/insert', 'StockController@insert');
 Route::get('/stock/edit/{id}', 'StockController@edit');
 Route::post('/stock/update', 'StockController@update');
 Route::post('/stock/delete/{id}', 'StockController@delete');
+Route::get('/stock/report', 'StockController@report');

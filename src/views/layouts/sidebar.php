@@ -72,42 +72,18 @@ $menu = [
         "icon" => "fas fa-money-bill-wave",
         "url" => "/finance"
     ],
-    // [
-    //     "module" => "employee",
-    //     "name" => "จัดการข้อมูลพนักงาน",
-    //     "icon" => "fas fa-users",
-    //     "url" => "/employee"
-    // ],
-    // [
-    //     "module" => "employee-schedule",
-    //     "name" => "ตารางงานของพนักงาน",
-    //     "icon" => "fas fa-calendar-day",
-    //     "url" => "/employee-schedule"
-    // ],
-    // [
-    //     "module" => "stock",
-    //     "name" => "จัดการข้อมูลสินค้าและผลิตภัณฑ์ภายในร้าน",
-    //     "icon" => "fas fa-box",
-    //     "url" => "/stock"
-    // ],
-    // [
-    //     "module" => "service",
-    //     "name" => "จัดการข้อมูลการบริการ",
-    //     "icon" => "fas fa-air-freshener",
-    //     "url" => "/service"
-    // ],
-    // [
-    //     "module" => "comment",
-    //     "name" => "จัดการความคิดเห็น",
-    //     "icon" => "fas fa-comments",
-    //     "url" => "/comment"
-    // ],
-    // [
-    //     "module" => "finance",
-    //     "name" => "ข้อมูลทางการเงิน",
-    //     "icon" => "fas fa-wallet",
-    //     "url" => "/finance"
-    // ],
+    [
+        "module" => "supply",
+        "name" => "จัดการวัสดุสิ้นเปลือง",
+        "icon" => "fas fa-boxes",
+        "url" => "/supply"
+    ],
+        [
+        "module" => "stock",
+        "name" => "จัดการคลังสินค้า",
+        "icon" => "fas fa-warehouse",
+        "url" => "/stock"
+    ],
 ];
 $session = explode(", " , $_SESSION['AD_PERMISSION']);
 function isActive($data)
