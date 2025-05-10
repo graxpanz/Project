@@ -1,7 +1,7 @@
 <div class="card shadow">
     <div class="card-header border-0 pt-4">
         <h4>
-            <i class="fas fa-user-plus"></i>
+            <i class="fas fa-list"></i>
             เพิ่มข้อมูลประเภทของบริการ
         </h4>
         <a href="/service_type" class="btn btn-secondary mt-3">

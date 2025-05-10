@@ -1,7 +1,7 @@
 <div class="card shadow">
     <div class="card-header border-0 pt-4">
         <h4>
-            <i class="fas fa-calendar-plus"></i>
+            <i class="fas fa-calendar-check"></i>
             เพิ่มข้อมูลการจอง
         </h4>
         <a href="/booking" class="btn btn-secondary mt-3">
@@ -131,6 +131,9 @@
                                             <input type="text" class="form-control-plaintext font-weight-bold text-success" id="total_price_display" value="0.00 บาท" readonly>
                                             <input type="hidden" name="total_price" id="total_price" value="0">
                                         </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <p class="small">* ต้องสร้างข้อมูลการจองขึ้นมาก่อนจึงจะสามารถเพิ่มหลักฐานการโอนเงินมัดจำได้</p>
                                     </div>
                                 </div>
                             </div>

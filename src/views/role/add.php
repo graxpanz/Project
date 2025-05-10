@@ -1,7 +1,7 @@
 <div class="card shadow">
     <div class="card-header border-0 pt-4">
         <h4>
-            <i class="fas fa-tag"></i>
+            <i class="fas fa-user-shield"></i>
             เพิ่มข้อมูลสิทธ์ผู้ใช้
         </h4>
         <a href="/role" class="btn btn-secondary mt-3">

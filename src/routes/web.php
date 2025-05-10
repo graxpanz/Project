@@ -62,6 +62,7 @@ Route::post('/booking/insert', 'BookingController@insert');
 Route::get('/booking/edit/{id}', 'BookingController@edit');
 Route::post('/booking/update', 'BookingController@update');
 Route::post('/booking/delete/{id}', 'BookingController@delete');
+Route::post('/booking/transaction/upload', 'TransactionController@upload');
 
 Route::get('/feedback', 'FeedbackController@index');
 Route::get('/feedback/add', 'FeedbackController@add');

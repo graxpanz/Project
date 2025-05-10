@@ -1,7 +1,7 @@
 <div class="card shadow">
     <div class="card-header border-0 pt-4">
         <h4>
-            <i class="fas fa-user-cog"></i>
+            <i class="fas fa-list"></i>
             จัดการประเภทของบริการ
         </h4>
         <a href="/service_type/add" class="btn btn-primary mt-3">

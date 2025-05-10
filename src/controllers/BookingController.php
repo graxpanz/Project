@@ -5,6 +5,7 @@ class BookingController extends Controller {
     private $serviceModel;
     private $userModel;
     private $promotionModel;
+    private $transactionModel;
 
     public function __construct() {
         parent::__construct();
@@ -13,6 +14,7 @@ class BookingController extends Controller {
         $this->serviceModel = $this->model('Service');
         $this->userModel = $this->model('User');
         $this->promotionModel = $this->model('Promotion');
+        $this->transactionModel = $this->model('Transaction');
     }
 
     public function index() {
@@ -78,6 +80,7 @@ class BookingController extends Controller {
         $services = $this->serviceModel->getAllServices();
         $employees = $this->userModel->getAllEmployees();
         $promotions = $this->promotionModel->getAllPromotions();
+        $transactions = $this->transactionModel->getTransactionsByBookingId($booking['booking_id']);
         
         $data = [
             'title' => 'แก้ไขข้อมูลการจอง | Mira ศูนย์ความงามครบวงจร',
@@ -85,7 +88,8 @@ class BookingController extends Controller {
             'customers' => $customers,
             'services' => $services,
             'employees' => $employees,
-            'promotions' => $promotions
+            'promotions' => $promotions,
+            'transactions' => $transactions
         ];
         $this->view('booking/edit', $data);
     }

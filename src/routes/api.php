@@ -24,3 +24,5 @@ Route::get('/api/estimate/customer', 'EstimateController@api_estimate_by_custome
 Route::post('/api/estimate/create', 'EstimateController@api_create_estimate');
 Route::post('/api/estimate/update', 'EstimateController@api_update_estimate');
 Route::post('/api/estimate/delete', 'EstimateController@api_delete_estimate');
+
+Route::post('/api/transaction/add', 'TransactionController@api_add_transaction');

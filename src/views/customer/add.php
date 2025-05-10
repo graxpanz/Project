@@ -1,7 +1,7 @@
 <div class="card shadow">
     <div class="card-header border-0 pt-4">
         <h4>
-            <i class="fas fa-user-plus"></i>
+            <i class="fas fa-users"></i>
             เพิ่มข้อมูลลูกค้า
         </h4>
         <a href="/customer" class="btn btn-secondary mt-3">
