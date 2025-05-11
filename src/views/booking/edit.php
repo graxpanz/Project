@@ -185,7 +185,16 @@
             </div>
         </div>
         <div class="card-footer">
-            <button type="submit" class="btn btn-primary btn-block mx-auto w-50" name="submit">บันทึกข้อมูล</button>
+            <div class="row">
+                <div class="col-md-6 mb-2 mb-md-0">
+                    <button type="submit" class="btn btn-primary btn-block" name="submit">บันทึกข้อมูล</button>
+                </div>
+                <div class="col-md-6">
+                    <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#receiptModal">
+                        <i class="fas fa-print"></i> พิมพ์ใบเสร็จชำระเงิน
+                    </button>
+                </div>
+            </div>
         </div>
     </form>
 </div>
@@ -234,6 +243,92 @@
                     <button type="submit" class="btn btn-primary">อัปโหลด</button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal สำหรับพิมพ์ใบเสร็จชำระเงิน -->
+<div class="modal fade" id="receiptModal" tabindex="-1" role="dialog" aria-labelledby="receiptModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="receiptModalLabel">พิมพ์ใบเสร็จชำระเงิน</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="payment_amount">จำนวนเงินที่ชำระ (บาท)</label>
+                            <input type="number" class="form-control" id="payment_amount" step="0.01" min="0" value="<?= $booking['total_price'] ?? 0 ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="payment_method">วิธีการชำระเงิน</label>
+                            <select class="form-control" id="payment_method">
+                                <option value="เงินสด">เงินสด</option>
+                                <option value="โอนเงิน">โอนเงิน</option>
+                                <option value="บัตรเครดิต/เดบิต">บัตรเครดิต/เดบิต</option>
+                                <option value="QR Payment">QR Payment</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="payment_note">หมายเหตุการชำระเงิน</label>
+                            <textarea class="form-control" id="payment_note" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0">สรุปรายการ</h6>
+                            </div>
+                            <div class="card-body p-2">
+                                <table class="table table-sm table-bordered">
+                                    <tr>
+                                        <td>ลูกค้า:</td>
+                                        <td><span id="receipt_customer_name"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>บริการ:</td>
+                                        <td><span id="receipt_service_name"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>วันที่ให้บริการ:</td>
+                                        <td><span id="receipt_service_date"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>ราคาบริการ:</td>
+                                        <td><span id="receipt_service_price"></span> บาท</td>
+                                    </tr>
+                                    <tr>
+                                        <td>ส่วนลด:</td>
+                                        <td><span id="receipt_discount"></span> บาท</td>
+                                    </tr>
+                                    <tr class="table-success">
+                                        <td><strong>ยอดรวมชำระ:</strong></td>
+                                        <td><strong><span id="receipt_total"></span> บาท</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td>รับเงิน:</td>
+                                        <td><span id="receipt_payment_amount"></span> บาท</td>
+                                    </tr>
+                                    <tr>
+                                        <td>เงินทอน:</td>
+                                        <td><span id="receipt_change"></span> บาท</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
+                <button type="button" class="btn btn-primary" id="printReceiptBtn">
+                    <i class="fas fa-print"></i> พิมพ์ใบเสร็จ
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -358,4 +453,191 @@
             });
         });
     });
+
+    $('#receiptModal').on('show.bs.modal', function() {
+        // อัพเดตข้อมูลในหน้าต่างใบเสร็จ
+        const customerName = $('#customer_id option:selected').text();
+        const serviceName = $('#service_id option:selected').text().split(' - ')[0];
+        const servicePrice = parseFloat($('#price').val()) || 0;
+        const discount = parseFloat($('#discount').val()) || 0;
+        const totalPrice = parseFloat($('#total_price').val()) || 0;
+        const appointmentDate = $('#appointment_date').val();
+        const appointmentTime = $('#appointment_time').val();
+        
+        // แสดงข้อมูลในตาราง preview
+        $('#receipt_customer_name').text(customerName);
+        $('#receipt_service_name').text(serviceName);
+        $('#receipt_service_date').text(formatThaiDate(appointmentDate) + ' ' + appointmentTime + ' น.');
+        $('#receipt_service_price').text(servicePrice.toFixed(2));
+        $('#receipt_discount').text(discount.toFixed(2));
+        $('#receipt_total').text(totalPrice.toFixed(2));
+        
+        // ตั้งค่าเริ่มต้นสำหรับจำนวนเงินที่ชำระ
+        $('#payment_amount').val(totalPrice.toFixed(2));
+        updateChange();
+    });
+
+    // คำนวณเงินทอน
+    $('#payment_amount').on('input', function() {
+        updateChange();
+    });
+
+    function updateChange() {
+        const totalPrice = parseFloat($('#total_price').val()) || 0;
+        const paymentAmount = parseFloat($('#payment_amount').val()) || 0;
+        const change = paymentAmount - totalPrice;
+        
+        $('#receipt_payment_amount').text(paymentAmount.toFixed(2));
+        $('#receipt_change').text(change >= 0 ? change.toFixed(2) : '0.00');
+    }
+
+    // พิมพ์ใบเสร็จ
+    $('#printReceiptBtn').on('click', function() {
+        const customerName = $('#customer_id option:selected').text();
+        const serviceName = $('#service_id option:selected').text().split(' - ')[0];
+        const servicePrice = parseFloat($('#price').val()) || 0;
+        const discount = parseFloat($('#discount').val()) || 0;
+        const totalPrice = parseFloat($('#total_price').val()) || 0;
+        const appointmentDate = $('#appointment_date').val();
+        const appointmentTime = $('#appointment_time').val();
+        const paymentAmount = parseFloat($('#payment_amount').val()) || 0;
+        const change = paymentAmount - totalPrice;
+        const paymentMethod = $('#payment_method').val();
+        const paymentNote = $('#payment_note').val();
+        
+        // สร้างหน้าต่างใหม่สำหรับการพิมพ์
+        const printWindow = window.open('', '_blank');
+        
+        // เตรียม HTML
+        let htmlContent = '<!DOCTYPE html><html><head>';
+        htmlContent += '<title>ใบเสร็จรับเงิน - Mira</title>';
+        htmlContent += '<meta charset="utf-8">';
+        htmlContent += '<style>';
+        htmlContent += '@import url("https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap");';
+        htmlContent += 'body { font-family: "Sarabun", sans-serif; padding: 20px; color: #000; }';
+        htmlContent += '.receipt-header { text-align: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #ddd; }';
+        htmlContent += '.receipt-footer { margin-top: 30px; text-align: center; font-size: 12px; }';
+        htmlContent += 'table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }';
+        htmlContent += 'table, th, td { border: 1px solid #ddd; }';
+        htmlContent += 'th, td { padding: 10px; text-align: left; }';
+        htmlContent += '.text-right { text-align: right; }';
+        htmlContent += '.receipt-total { font-weight: bold; background-color: #f8f9fa; }';
+        htmlContent += '.signature-section { margin-top: 50px; display: flex; justify-content: space-between; }';
+        htmlContent += '.signature-box { width: 45%; text-align: center; }';
+        htmlContent += '.signature-line { border-top: 1px solid #000; margin-top: 50px; margin-bottom: 10px; }';
+        htmlContent += '@media print { @page { maring: 0 } body, * { color: #000 !important; } }';
+        htmlContent += '</style>';
+        htmlContent += '</head><body>';
+        
+        // ส่วนหัวใบเสร็จ
+        htmlContent += '<div class="receipt-header">';
+        htmlContent += '<h2>ใบเสร็จรับเงิน</h2>';
+        htmlContent += '<h4>Mira ศูนย์ความงามครบวงจร</h4>';
+        htmlContent += '<p>เลขที่ใบเสร็จ: MR' + new Date().getFullYear() + padZero(new Date().getMonth() + 1) + padZero(new Date().getDate()) + '-' + Math.floor(Math.random() * 10000) + '</p>';
+        htmlContent += '<p>วันที่ออกใบเสร็จ: ' + new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) + '</p>';
+        htmlContent += '</div>';
+        
+        // ข้อมูลลูกค้า
+        htmlContent += '<table>';
+        htmlContent += '<tr><td colspan="2"><strong>ข้อมูลลูกค้า</strong></td></tr>';
+        htmlContent += '<tr><td>ชื่อลูกค้า:</td><td>' + customerName + '</td></tr>';
+        htmlContent += '<tr><td>วันที่รับบริการ:</td><td>' + formatThaiDate(appointmentDate) + ' ' + appointmentTime + ' น.</td></tr>';
+        htmlContent += '</table>';
+        
+        // รายการบริการ
+        htmlContent += '<table>';
+        htmlContent += '<tr>';
+        htmlContent += '<th style="width: 5%;">#</th>';
+        htmlContent += '<th style="width: 55%;">รายการ</th>';
+        htmlContent += '<th style="width: 20%;" class="text-right">ราคา (บาท)</th>';
+        htmlContent += '<th style="width: 20%;" class="text-right">รวม (บาท)</th>';
+        htmlContent += '</tr>';
+        
+        // บริการหลัก
+        htmlContent += '<tr>';
+        htmlContent += '<td>1</td>';
+        htmlContent += '<td>' + serviceName + '</td>';
+        htmlContent += '<td class="text-right">' + servicePrice.toFixed(2) + '</td>';
+        htmlContent += '<td class="text-right">' + servicePrice.toFixed(2) + '</td>';
+        htmlContent += '</tr>';
+        
+        // ส่วนลด (ถ้ามี)
+        if (discount > 0) {
+            htmlContent += '<tr>';
+            htmlContent += '<td colspan="3" class="text-right">ส่วนลด:</td>';
+            htmlContent += '<td class="text-right">-' + discount.toFixed(2) + '</td>';
+            htmlContent += '</tr>';
+        }
+        
+        // ยอดรวม
+        htmlContent += '<tr class="receipt-total">';
+        htmlContent += '<td colspan="3" class="text-right"><strong>ยอดรวมทั้งสิ้น:</strong></td>';
+        htmlContent += '<td class="text-right"><strong>' + totalPrice.toFixed(2) + '</strong></td>';
+        htmlContent += '</tr>';
+        
+        htmlContent += '<tr>';
+        htmlContent += '<td colspan="3" class="text-right">รับเงิน (' + paymentMethod + '):</td>';
+        htmlContent += '<td class="text-right">' + paymentAmount.toFixed(2) + '</td>';
+        htmlContent += '</tr>';
+        
+        htmlContent += '<tr>';
+        htmlContent += '<td colspan="3" class="text-right">เงินทอน:</td>';
+        htmlContent += '<td class="text-right">' + (change > 0 ? change.toFixed(2) : '0.00') + '</td>';
+        htmlContent += '</tr>';
+        htmlContent += '</table>';
+        
+        // หมายเหตุ (ถ้ามี)
+        if (paymentNote) {
+            htmlContent += '<p><strong>หมายเหตุ:</strong> ' + paymentNote + '</p>';
+        }
+        
+        // ส่วนลงลายมือชื่อ
+        htmlContent += '<div class="signature-section">';
+        htmlContent += '<div class="signature-box">';
+        htmlContent += '</div>';
+        
+        htmlContent += '<div class="signature-box">';
+        htmlContent += '<div class="signature-line"></div>';
+        htmlContent += '<p>ผู้รับเงิน</p>';
+        htmlContent += '</div>';
+        htmlContent += '</div>';
+        
+        // ส่วนท้าย
+        htmlContent += '<div class="receipt-footer">';
+        htmlContent += '<p>ขอบคุณที่ใช้บริการ Mira ศูนย์ความงามครบวงจร</p>';
+        htmlContent += '<p>เอกสารนี้เป็นใบเสร็จรับเงิน/ใบกำกับภาษีอย่างย่อ</p>';
+        htmlContent += '</div>';
+        
+        // สคริปต์สำหรับการพิมพ์
+        htmlContent += '<script>';
+        htmlContent += 'window.onload = function() {';
+        htmlContent += '  setTimeout(function() {';
+        htmlContent += '    window.print();';
+        htmlContent += '    setTimeout(function() { window.close(); }, 500);';
+        htmlContent += '  }, 500);';
+        htmlContent += '};';
+        htmlContent += '<\/script>';
+        
+        htmlContent += '</body></html>';
+        
+        // เขียน HTML ลงในหน้าต่างที่เปิด
+        printWindow.document.open();
+        printWindow.document.write(htmlContent);
+        printWindow.document.close();
+    });
+
+    // ฟังก์ชันช่วยจัดรูปแบบวันที่เป็นไทย
+    function formatThaiDate(dateString) {
+        const date = new Date(dateString);
+        const thaiMonths = [
+            'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+            'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+        ];
+        return `${date.getDate()} ${thaiMonths[date.getMonth()]} ${date.getFullYear() + 543}`;
+    }
+
+    // ฟังก์ชันเติม 0 ข้างหน้าตัวเลข
+    function padZero(num) {
+        return String(num).padStart(2, '0');
+    }
 </script>
