@@ -1,18 +1,20 @@
 <?php
-class Controller {
+class Controller
+{
     protected $allowedRoutes = ['login', 'logout', 'forgot-password', 'assets', 'api']; // Add any public routes here
 
-    public function __construct() {
+    public function __construct()
+    {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
         $currentRoute = $this->getCurrentRoute();
         if (!in_array($currentRoute, $this->allowedRoutes)) {
             if (!isset($_SESSION['AD_ID']) || empty($_SESSION['AD_ID'])) {
-                redirect('/login'); 
+                redirect('/login');
                 exit;
             } else {
-                $session = explode(", " , $_SESSION['AD_PERMISSION']);
+                $session = explode(", ", $_SESSION['AD_PERMISSION']);
                 if (!in_array($currentRoute, $session)) {
                     $this->view('errors/404', ["url" => "/" . $session[0]], FALSE);
                     exit;
@@ -21,12 +23,14 @@ class Controller {
         }
     }
 
-    public function model($model) {
+    public function model($model)
+    {
         require_once '../models/' . $model . '.php';
         return new $model();
     }
 
-    public function view($view, $data = [], $layout = TRUE) {
+    public function view($view, $data = [], $layout = TRUE)
+    {
         $viewPath = "../views/{$view}.php";
         if (file_exists($viewPath)) {
             extract($data);
@@ -41,10 +45,11 @@ class Controller {
         }
     }
 
-    public function json($data, $status = 200) {
+    public function json($data, $status = 200)
+    {
         header('Content-Type: application/json; charset=utf-8');
         http_response_code($status);
-        
+
         if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
             echo json_encode([
                 'error' => json_last_error_msg(),
@@ -56,17 +61,23 @@ class Controller {
         exit();
     }
 
-    public function getAuthToken() {
+    public function getAuthToken()
+    {
         $headers = getallheaders();
-        if (isset($headers['Authorization'])) {
-            if (preg_match('/Bearer\s(\S+)/', $headers['Authorization'], $matches)) {
+        $headers = array_change_key_case($headers, CASE_LOWER);
+
+        if (isset($headers['authorization'])) {
+            $authorization = $headers['authorization'];
+            if (preg_match('/Bearer\s+(\S+)/i', $authorization, $matches)) {
                 return $matches[1];
             }
         }
+
         return null;
     }
 
-    public function dateFormat($date) {
+    public function dateFormat($date)
+    {
         return date('d/m/Y H:i:s', strtotime($date));
     }
 
@@ -75,7 +86,8 @@ class Controller {
      * @param string $error Error page name (e.g., '404', '500')
      * @return void
      */
-    protected function renderError($error) {
+    protected function renderError($error)
+    {
         $errorPath = "../views/errors/{$error}.php";
         if (file_exists($errorPath)) {
             require_once $errorPath;
@@ -88,7 +100,8 @@ class Controller {
      * Get current route from URL
      * @return string
      */
-    protected function getCurrentRoute() {
+    protected function getCurrentRoute()
+    {
         $uri = $_SERVER['REQUEST_URI'];
         $path = parse_url($uri, PHP_URL_PATH);
         $segments = explode('/', trim($path, '/'));
