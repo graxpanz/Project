@@ -1,13 +1,15 @@
 <div class="card shadow">
     <div class="card-header border-0 pt-4">
-        <h4>
-            <i class="fas fa-chart-bar"></i>
-            รายงานการเคลื่อนไหวสต็อก
-        </h4>
-        <a href="/stock" class="btn btn-secondary mt-3">
-            <i class="fas fa-arrow-left"></i>
-            กลับหน้าหลัก
-        </a>
+        <div class="card-header border-0 pt-4">
+            <h4>
+                <i class="fas fa-chart-bar"></i>
+                รายงานการเคลื่อนไหวสต็อก
+            </h4>
+            <a href="/stock" class="btn btn-secondary mt-3 mr-2">
+                <i class="fas fa-arrow-left"></i>
+                กลับหน้าหลัก
+            </a>
+        </div>
     </div>
     <div class="card-body">
         <!-- ตัวกรองวันที่ -->
@@ -46,14 +48,14 @@
                         $totalIn = 0;
                         $totalOut = 0;
                         $movementsBySupply = [];
-                        
+
                         foreach ($movements as $movement) {
                             if ($movement['movement_type'] == 'in') {
                                 $totalIn++;
                             } else {
                                 $totalOut++;
                             }
-                            
+
                             $supplyId = $movement['supply_id'];
                             if (!isset($movementsBySupply[$supplyId])) {
                                 $movementsBySupply[$supplyId] = [
@@ -62,7 +64,7 @@
                                     'out' => 0
                                 ];
                             }
-                            
+
                             if ($movement['movement_type'] == 'in') {
                                 $movementsBySupply[$supplyId]['in'] += $movement['quantity'];
                             } else {
@@ -70,7 +72,7 @@
                             }
                         }
                         ?>
-                        
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="card border-left-success shadow h-100 py-2">
@@ -105,7 +107,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- กราฟแสดงการเคลื่อนไหวรายวัสดุ -->
                         <div class="mt-4">
                             <h5>การเคลื่อนไหวรายวัสดุสิ้นเปลือง</h5>
@@ -136,7 +138,7 @@
                                     <th width="10%">จำนวน</th>
                                     <th width="20%">รายละเอียด</th>
                                     <th width="10%">อ้างอิง</th>
-                                    <th width="20%">ผู้ที่เกี่ยวข้อง</th>
+                                    <th width="20%">วันที่สร้างรายการ</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -173,6 +175,10 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
 <script>
     $(function() {
         // Initialize DataTable
@@ -198,20 +204,19 @@
             },
             'dom': 'Bfrtip',
             'buttons': [
-                'copy', 'csv', 'excel', 'pdf', 'print'
+                'csv', 'excel', 'pdf', 'print'
             ]
         });
 
         // สร้างกราฟแสดงการเคลื่อนไหวรายวัสดุ
         const movementsBySupply = <?= json_encode(array_values($movementsBySupply)) ?>;
-        
+
         const ctx = document.getElementById('supplyMovementChart').getContext('2d');
         new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: movementsBySupply.map(item => item.name),
-                datasets: [
-                    {
+                datasets: [{
                         label: 'รับเข้า',
                         data: movementsBySupply.map(item => item.in),
                         backgroundColor: 'rgba(75, 192, 192, 0.6)',
