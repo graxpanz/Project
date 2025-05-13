@@ -1,25 +1,25 @@
 <?php
-class BookingController extends Controller {
+class BookingController extends Controller
+{
     private $bookingModel;
     private $customerModel;
     private $serviceModel;
     private $userModel;
     private $promotionModel;
-    private $transactionModel;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->bookingModel = $this->model('Booking');
         $this->customerModel = $this->model('Customer');
         $this->serviceModel = $this->model('Service');
         $this->userModel = $this->model('User');
         $this->promotionModel = $this->model('Promotion');
-        $this->transactionModel = $this->model('Transaction');
     }
 
-    public function index() {
+    public function index()
+    {
         $bookings = $this->bookingModel->getAllBookings();
-        // return $this->json($bookings);
         $data = [
             'title' => 'จัดการข้อมูลการจอง | Mira ศูนย์ความงามครบวงจร',
             'bookings' => $bookings,
@@ -27,7 +27,8 @@ class BookingController extends Controller {
         $this->view('booking/index', $data);
     }
 
-    public function add() {
+    public function add()
+    {
         $customers = $this->customerModel->getAllCustomers();
         $services = $this->serviceModel->getAllServices();
         $employees = $this->userModel->getAllEmployees();
@@ -42,7 +43,8 @@ class BookingController extends Controller {
         $this->view('booking/add', $data);
     }
 
-    public function insert() {
+    public function insert()
+    {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Validate required fields
             $requiredFields = ['customer_id', 'service_id', 'appointment_date', 'appointment_time', 'price', 'total_price'];
@@ -52,7 +54,7 @@ class BookingController extends Controller {
                     exit;
                 }
             }
-            
+
             // Ensure price values are numeric
             $numericFields = ['price', 'discount', 'deposit_price', 'total_price'];
             foreach ($numericFields as $field) {
@@ -60,8 +62,23 @@ class BookingController extends Controller {
                     $_POST[$field] = (float) $_POST[$field];
                 }
             }
-            
+
             if ($this->bookingModel->insertBooking($_POST)) {
+                // ส่งการแจ้งเตือนไปยัง LINE เมื่อมีการจองคิวสำเร็จ
+                $customer = $this->customerModel->getCustomerById($_POST['customer_id']);
+                $service = $this->serviceModel->getServiceById($_POST['service_id']);
+
+                if ($customer && $service) {
+                    $messageText = "📌 มีการจองคิวใหม่\n";
+                    $messageText .= "ลูกค้า: " . $customer['firstname'] . " " . $customer['lastname'] . "\n";
+                    $messageText .= "บริการ: " . $service['name'] . "\n";
+                    $messageText .= "วันที่: " . $_POST['appointment_date'] . "\n";
+                    $messageText .= "เวลา: " . $_POST['appointment_time'] . " น.\n";
+                    $messageText .= "ราคา: " . number_format($_POST['total_price'], 2) . " บาท";
+
+                    $this->sendLineMessage('Ce80c1ba5e030cf2808fddbfffe88501d', $messageText);
+                }
+
                 redirect()->with('success', 'เพิ่มข้อมูลการจองสำเร็จ')->to('/booking');
             } else {
                 redirect()->with('error', 'เกิดข้อผิดพลาดในการเพิ่มข้อมูล')->back();
@@ -71,31 +88,31 @@ class BookingController extends Controller {
         }
     }
 
-    public function edit($id) {
+    public function edit($id)
+    {
         $booking = $this->bookingModel->getBookingById($id);
         if (!$booking) {
             redirect()->with('error', 'ไม่พบข้อมูลการจอง')->to('/booking');
         }
-        
+
         $customers = $this->customerModel->getAllCustomers();
         $services = $this->serviceModel->getAllServices();
         $employees = $this->userModel->getAllEmployees();
         $promotions = $this->promotionModel->getAllPromotions();
-        $transactions = $this->transactionModel->getTransactionsByBookingId($booking['booking_id']);
-        
+
         $data = [
             'title' => 'แก้ไขข้อมูลการจอง | Mira ศูนย์ความงามครบวงจร',
             'booking' => $booking,
             'customers' => $customers,
             'services' => $services,
             'employees' => $employees,
-            'promotions' => $promotions,
-            'transactions' => $transactions
+            'promotions' => $promotions
         ];
         $this->view('booking/edit', $data);
     }
 
-    public function update() {
+    public function update()
+    {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Validate required fields
             $requiredFields = ['booking_id', 'customer_id', 'service_id', 'appointment_date', 'appointment_time', 'price', 'total_price', 'status'];
@@ -105,15 +122,37 @@ class BookingController extends Controller {
                     exit;
                 }
             }
-            
+
             $numericFields = ['price', 'discount', 'deposit_price', 'total_price'];
             foreach ($numericFields as $field) {
                 if (isset($_POST[$field])) {
                     $_POST[$field] = (float) $_POST[$field];
                 }
             }
-            
+
+            // ตรวจสอบการเปลี่ยนสถานะการจอง
+            $currentBooking = $this->bookingModel->getBookingById($_POST['booking_id']);
+
             if ($this->bookingModel->updateBooking($_POST)) {
+                // ถ้ามีการเปลี่ยนสถานะ ให้ส่งการแจ้งเตือนไปยัง LINE
+                if ($currentBooking && $currentBooking['status'] !== $_POST['status']) {
+                    $customer = $this->customerModel->getCustomerById($_POST['customer_id']);
+                    $service = $this->serviceModel->getServiceById($_POST['service_id']);
+
+                    if ($customer && $service) {
+                        $statusThai = $this->getThaiStatus($_POST['status']);
+
+                        $messageText = "📝 เปลี่ยนสถานะการจอง\n";
+                        $messageText .= "ลูกค้า: " . $customer['firstname'] . " " . $customer['lastname'] . "\n";
+                        $messageText .= "บริการ: " . $service['name'] . "\n";
+                        $messageText .= "วันที่เข้ารับบริการ: " . $_POST['appointment_date'] . "\n";
+                        $messageText .= "เวลา: " . $_POST['appointment_time'] . " น.\n";
+                        $messageText .= "สถานะ: " . $statusThai;
+
+                        $this->sendLineMessage('Ce80c1ba5e030cf2808fddbfffe88501d', $messageText);
+                    }
+                }
+
                 redirect()->with('success', 'อัปเดตข้อมูลการจองสำเร็จ')->to('/booking');
             } else {
                 redirect()->with('error', 'เกิดข้อผิดพลาดในการอัปเดตข้อมูล')->back();
@@ -123,22 +162,89 @@ class BookingController extends Controller {
         }
     }
 
-    public function delete($id) {
+    public function delete($id)
+    {
+        $booking = $this->bookingModel->getBookingById($id);
+
         if ($this->bookingModel->deleteBooking($id)) {
+            // ส่งการแจ้งเตือนไปยัง LINE เมื่อมีการลบข้อมูลการจอง
+            if ($booking) {
+                $customer = $this->customerModel->getCustomerById($booking['customer_id']);
+                $service = $this->serviceModel->getServiceById($booking['service_id']);
+
+                if ($customer && $service) {
+                    $messageText = "❌ มีการลบข้อมูลการจอง\n";
+                    $messageText .= "ลูกค้า: " . $customer['firstname'] . " " . $customer['lastname'] . "\n";
+                    $messageText .= "บริการ: " . $service['name'] . "\n";
+                    $messageText .= "วันที่เข้ารับบริการ: " . $booking['appointment_date'] . "\n";
+                    $messageText .= "เวลา: " . $booking['appointment_time'] . " น.";
+
+                    $this->sendLineMessage('Ce80c1ba5e030cf2808fddbfffe88501d', $messageText);
+                }
+            }
+
             redirect()->with('success', 'ลบข้อมูลการจองสำเร็จ')->to('/booking');
         } else {
             redirect()->with('error', 'เกิดข้อผิดพลาดในการลบข้อมูล')->back();
         }
     }
 
-    public function api_booking_add() {
+    // แปลงรหัสสถานะเป็นภาษาไทย
+    private function getThaiStatus($status)
+    {
+        $statusMap = [
+            'pending' => 'รอดำเนินการ',
+            'confirm' => 'ยืนยันแล้ว',
+            'complete' => 'เสร็จสิ้น',
+            'cancel' => 'ยกเลิก'
+        ];
+
+        return isset($statusMap[$status]) ? $statusMap[$status] : $status;
+    }
+
+    // LINE Message
+    private function sendLineMessage($groupId, $messageText)
+    {
+        $accessToken = 'nd3PJ+24pHHsvg5T7pClMgTnE00StV0gfYpvLKw87bFtWIvfgBpKHLAtBFumrartJZaw0YkLNUZJvyZVoI/bSaPhM5d6DYtQ/NPZriWW7a/Cn3zRILXMUdEazEDpLsNiVJ9zPqB1ID8HjsSy/o7HkwdB04t89/1O/w1cDnyilFU=';
+        $url = 'https://api.line.me/v2/bot/message/push';
+
+        $headers = [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $accessToken
+        ];
+
+        $body = json_encode([
+            'to' => $groupId,
+            'messages' => [
+                [
+                    'type' => 'text',
+                    'text' => $messageText
+                ]
+            ]
+        ]);
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        return $result;
+    }
+
+
+    public function api_booking_add()
+    {
         if ($_SERVER['REQUEST_METHOD'] != 'POST') {
             $this->json([
                 'status' => false,
                 'message' => 'Invalid request method'
             ]);
         }
-    
+
         try {
             $token = $this->getAuthToken();
             if (!$token) {
@@ -159,7 +265,7 @@ class BookingController extends Controller {
             // Validate input
             $required = ['customer_id', 'service_id', 'appointment_date', 'appointment_time'];
             $data = json_decode(file_get_contents('php://input'), true);
-            
+
             foreach ($required as $field) {
                 if (empty($data[$field])) {
                     $this->json([
@@ -168,7 +274,7 @@ class BookingController extends Controller {
                     ]);
                 }
             }
-    
+
             // Validate customer exists
             $customer = $this->customerModel->getCustomerById($data['customer_id']);
             if (!$customer) {
@@ -177,7 +283,7 @@ class BookingController extends Controller {
                     'message' => 'Customer not found'
                 ]);
             }
-    
+
             // Validate service exists
             $service = $this->serviceModel->getServiceById($data['service_id']);
             if (!$service) {
@@ -186,7 +292,7 @@ class BookingController extends Controller {
                     'message' => 'Service not found'
                 ]);
             }
-    
+
             // Validate appointment date and time
             $appointmentDatetime = $data['appointment_date'] . ' ' . $data['appointment_time'] . ':00';
             if (strtotime($appointmentDatetime) < time()) {
@@ -195,7 +301,7 @@ class BookingController extends Controller {
                     'message' => 'Appointment cannot be in the past'
                 ]);
             }
-    
+
             // Set default values and process data
             $bookingData = [
                 'customer_id' => $data['customer_id'],
@@ -210,7 +316,7 @@ class BookingController extends Controller {
                 'status' => 'pending',
                 'note' => $data['note'] ?? null
             ];
-    
+
             // If promotion is provided, apply discount
             if (!empty($data['promotion_id'])) {
                 $promotion = $this->promotionModel->getPromotionById($data['promotion_id']);
@@ -222,29 +328,39 @@ class BookingController extends Controller {
                     }
                 }
             }
-    
+
             // Calculate deposit (10% of total)
             $bookingData['deposit_price'] = $bookingData['total_price'] * 0.1;
-    
+
             // Insert booking
             $bookingId = $this->bookingModel->insertBooking($bookingData);
-            
+
             if (!$bookingId) {
                 $this->json([
                     'status' => false,
                     'message' => 'Failed to create booking'
                 ]);
             }
-            
-            // Get the complete booking data to return
+
+            // ส่งการแจ้งเตือนไปยัง LINE เมื่อมีการจองคิวสำเร็จผ่าน API
+            $messageText = "📱 มีการจองคิวใหม่\n";
+            $messageText .= "ลูกค้า: " . $customer['firstname'] . " " . $customer['lastname'] . "\n";
+            $messageText .= "บริการ: " . $service['name'] . "\n";
+            $messageText .= "เข้ารับบริการวันที่: " . $data['appointment_date'] . "\n";
+            $messageText .= "เวลา: " . $data['appointment_time'] . " น.\n";
+            $messageText .= "ราคา: " . number_format($bookingData['total_price'], 2) . " บาท" ."\n";
+            $messageText .= "มัดจำแล้ว: " . number_format($bookingData['deposit_price'], 2) . " บาท";
+
+            $this->sendLineMessage('Ce80c1ba5e030cf2808fddbfffe88501d', $messageText);
+
             $newBooking = $this->bookingModel->getBookingById($bookingId);
-            
+
             $this->json([
                 'status' => true,
                 'message' => 'Booking created successfully',
                 'data' => $newBooking
             ]);
-    
+
         } catch (Exception $e) {
             error_log("API booking add error: " . $e->getMessage());
             $this->json([
@@ -255,14 +371,15 @@ class BookingController extends Controller {
         }
     }
 
-    public function api_booking_by_customer() {
+    public function api_booking_by_customer()
+    {
         if ($_SERVER['REQUEST_METHOD'] != 'GET') {
             $this->json([
                 'status' => false,
                 'message' => 'Invalid request method'
             ]);
         }
-    
+
         try {
             $token = $this->getAuthToken();
             if (!$token) {
@@ -279,19 +396,18 @@ class BookingController extends Controller {
                     'message' => 'Invalid or expired token'
                 ]);
             }
-    
-            // Get optional status parameter
+
             $status = isset($_GET['status']) ? $_GET['status'] : null;
-            
-            // Get all bookings for the customer
+
             $bookings = $this->bookingModel->getBookingsByCustomerId($sessionData['customer_id'], $status);
-            
+
             $this->json([
                 'status' => true,
                 'message' => 'Bookings retrieved successfully',
                 'data' => $bookings
             ]);
-    
+
+
         } catch (Exception $e) {
             error_log("API bookings by customer error: " . $e->getMessage());
             $this->json([
@@ -302,89 +418,76 @@ class BookingController extends Controller {
         }
     }
 
-    public function api_booking_cancel() {
-        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-            $this->json([
-                'status' => false,
-                'message' => 'Invalid request method'
-            ]);
-        }
-    
-        try {
-            $token = $this->getAuthToken();
-            if (!$token) {
-                $this->json([
-                    'status' => false,
-                    'message' => 'No authentication token provided'
-                ]);
-            }
+    public function api_booking_cancel()
+    {
+        ini_set('display_errors', 0);
+        error_reporting(0);
 
-            $sessionData = $this->customerModel->validateSession($token);
-            if (!$sessionData) {
-                $this->json([
-                    'status' => false,
-                    'message' => 'Invalid or expired token'
-                ]);
-            }
-            // Get data from request body
-            $data = json_decode(file_get_contents('php://input'), true);
-            
-            // Validate required fields
-            // $required = ['booking_id', 'status'];
-            $required = ['booking_id'];
-            foreach ($required as $field) {
-                if (empty($data[$field])) {
-                    $this->json([
-                        'status' => false,
-                        'message' => "Missing required field: {$field}"
-                    ]);
-                }
-            }
-            
-            // Validate booking exists
-            $booking = $this->bookingModel->getBookingById($data['booking_id']);
-            if (!$booking) {
-                $this->json([
-                    'status' => false,
-                    'message' => 'Booking not found'
-                ]);
-            }
-            
-            // Validate status value
-            // $validStatuses = ['cancel'];
-            // if (!in_array($data['status'], $validStatuses)) {
-            //     $this->json([
-            //         'status' => false,
-            //         'message' => 'Invalid status value. Valid values are: ' . implode(', ', $validStatuses)
-            //     ]);
-            // }
-            
-            // Update booking status
-            $result = $this->bookingModel->updateBookingStatus($data['booking_id'], 'cancel');
-            
-            if (!$result) {
-                $this->json([
-                    'status' => false,
-                    'message' => 'Failed to update booking status'
-                ]);
-            }
-            
-            // Get updated booking
-            $updatedBooking = $this->bookingModel->getBookingById($data['booking_id']);
-            
-            $this->json([
-                'status' => true,
-                'message' => 'Booking status updated successfully',
-                'data' => $updatedBooking
-            ]);
-    
-        } catch (Exception $e) {
-            error_log("API update booking status error: " . $e->getMessage());
-            $this->json([
-                'status' => false,
-                'message' => 'Failed to update booking status',
-                'error' => $e->getMessage()
-            ]);
+        header('Content-Type: application/json; charset=utf-8');
+
+        if (ob_get_level()) {
+            ob_end_clean();
         }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(['status' => false, 'message' => 'Invalid request method']);
+            exit;
+        }
+
+        $raw = file_get_contents('php://input');
+        $data = json_decode($raw, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            echo json_encode(['status' => false, 'message' => 'Invalid JSON: ' . json_last_error_msg()]);
+            exit;
+        }
+
+        $token = $this->getAuthToken();
+        if (!$token) {
+            echo json_encode(['status' => false, 'message' => 'No authentication token provided']);
+            exit;
+        }
+        $session = $this->customerModel->validateSession($token);
+        if (!$session) {
+            echo json_encode(['status' => false, 'message' => 'Invalid or expired token']);
+            exit;
+        }
+
+        if (empty($data['booking_id'])) {
+            echo json_encode(['status' => false, 'message' => 'Missing booking_id']);
+            exit;
+        }
+        $booking = $this->bookingModel->getBookingById($data['booking_id']);
+        if (!$booking) {
+            echo json_encode(['status' => false, 'message' => 'Booking not found']);
+            exit;
+        }
+
+        if (!$this->bookingModel->updateBookingStatus($data['booking_id'], 'cancel')) {
+            echo json_encode(['status' => false, 'message' => 'Failed to update booking status']);
+            exit;
+        }
+
+        $cust = $this->customerModel->getCustomerById($booking['customer_id']);
+        $srv = $this->serviceModel->getServiceById($booking['service_id']);
+        if ($cust && $srv) {
+            $txt = "❌ ลูกค้ายกเลิกการจองคิว\n";
+            $txt .= "ลูกค้า: {$cust['firstname']} {$cust['lastname']}\n";
+            $txt .= "บริการ: {$srv['name']}\n";
+            $txt .= "เข้ารับบริการวันที่: " . $booking['appointment_date'] . "\n";
+            $txt .= "เวลา: " . $booking['appointment_time'] . " น.\n";
+            $this->sendLineMessage('Ce80c1ba5e030cf2808fddbfffe88501d', $txt);
+        }
+
+        $updated = $this->bookingModel->getBookingById($data['booking_id']);
+        echo json_encode([
+            'status' => true,
+            'message' => 'Booking status updated successfully',
+            'data' => $updated
+        ]);
+        exit;
     }
+
+
+
+
 }
